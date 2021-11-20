@@ -26,7 +26,7 @@ class uArch():
         self._loadVMem()
 
     def run(self, input_path: str) -> np.array:
-        pass
+        raise NotImplementedError
 
     def _loadVMem(self) -> None:
         '''
@@ -34,14 +34,15 @@ class uArch():
         Only Conv, MaxPool, UpSampling, Concat layers are recorded
 
       ✓ 1. Create Layer class via the VMem API
-        2. Copy the weights and biases
-        3. Release the memory used by self.model
+      ✓ 2. Copy the weights and biases
+      ✓ 3. Release the memory used by self.model
         '''
         for layer in self.model.layers:
             layerConfig = layer.get_config()
             layerClassName = layer.__class__.__name__
             if layerClassName == 'Conv2D':
                 self.vMem.addConvLayer(name=layerConfig['name'], kernel_size=layerConfig['kernel_size'], strides=layerConfig['strides'], pad=layerConfig['padding'])
+                self.vMem.setWeigtsBias(layer_name=layerConfig['name'], weights=layer.get_weights()[0], bias=layer.get_weights()[1])
             elif layerClassName == 'MaxPooling2D':
                 self.vMem.addMaxPoolingLayer(name=layerConfig['name'], kernel_size=layerConfig['pool_size'], strides=layerConfig['strides'], pad=layerConfig['padding'])
             elif layerClassName == 'UpSampling2D':
@@ -52,3 +53,8 @@ class uArch():
                 self.vMem.addInputLayer(name=layerConfig['name'], input_shape=layerConfig['batch_input_shape'])
             else:
                 print ('skipping {} ({}) layer'.format(layerClassName, layerConfig['name']))
+
+        del self.model
+        self.model = None
+
+        self.vMem.layerStat()
