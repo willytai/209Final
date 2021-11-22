@@ -1,6 +1,10 @@
 from uArch import uArch
 import argparse
 
+'''
+Download model weights from: 'https://drive.google.com/file/d/1ED_2y6CAPgSV4XP-Ytnb-5D8bijMZITr/view?usp=sharing'
+'''
+
 def main(args: argparse.Namespace) -> None:
     arch = uArch()
     arch.loadModel(args.model)
