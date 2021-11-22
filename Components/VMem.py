@@ -12,18 +12,29 @@ from UNet.Layer import Layer, LayerType, PadType
     - self.layerList stores all the operational layers in order
     - self.layerMap stores the name mapping of each layer
     - self.featureMapStorage is the storage for feature map, the maximum storage reuqired is
-      input_width * input_height * 64 (the # of filters for the first convolutional layer)
+      input_width * input_height * #_of_filters_in_1st_conv
 '''
 class VMem():
-    def __init__(self, input_dim: tuple) -> None:
+    def __init__(self) -> None:
         self.layerList = list()
         self.layerMap = dict()
-        self.featureMapStorage = np.zeros(shape=(input_dim[0]*input_dim[1]*64), dtype=np.float32)
+        self.featureMapStorage = None
 
-    def addConvLayer(self, name: str, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:
+    def loadInput(self, image: np.array) -> None:
+        '''
+      ✓ 1. initialize self.featureMapStorage
+        2. quantize image to 8 bit
+        3. load to self.featureMapStorage
+        '''
+        inputDim = self.layerList[0].inputShape # from the first layer (input layer)
+        filters = self.layerList[1].filters     # from the first conv layer (right after the input layer)
+        self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters), dtype=np.float32)
+        raise NotImplementedError
+
+    def addConvLayer(self, name: str, filters: int, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:
         kernel_size, strides, pad = self._paramTypeTransfrom(kernel_size, strides, pad)
         newLayer = Layer(LayerType.CONV, name)
-        newLayer.setConvParam(kernel_size=kernel_size, strides=strides, pad=pad)
+        newLayer.setConvParam(filters=filters, kernel_size=kernel_size, strides=strides, pad=pad)
         self.layerList.append(newLayer)
         self.layerMap[name] = self.layerList[-1]
 
@@ -60,6 +71,9 @@ class VMem():
 
     def setWeigtsBias(self, layer_name: str, weights: np.array, bias: np.array) -> None:
         self.layerMap[layer_name].setWeigtsBias(weights, bias)
+
+    def getModelInputShape(self) -> tuple:
+        return self.layerList[0].inputShape
 
     def layerStat(self):
         for layer in self.layerList: print (layer)

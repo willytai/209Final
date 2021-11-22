@@ -24,6 +24,7 @@ class Layer():
         self.name = name
         self.pad = None
         self.kernel_size = None
+        self.filters = None
         self.strides = None
         self.concatSrc = None
         self.concatDst = None
@@ -31,8 +32,9 @@ class Layer():
         self.bias = None
         self.inputShape = None
 
-    def setConvParam(self, kernel_size: tuple, strides: int, pad: PadType) -> None:
+    def setConvParam(self, filters: int, kernel_size: tuple, strides: int, pad: PadType) -> None:
         assert PadType is not None
+        self.filters = filters
         self.kernel_size = kernel_size
         self.strides = strides
         self.pad = pad
@@ -51,6 +53,11 @@ class Layer():
         self.concatDst = dst
 
     def setInputParam(self, input_shape: tuple) -> None:
+        '''
+        remove the first dimension (batch size)
+        '''
+        if len(input_shape) == 4:
+            input_shape = (input_shape[1], input_shape[2], input_shape[3])
         self.inputShape = input_shape
 
     def setWeigtsBias(self, weights: np.array, bias: np.array) -> None:

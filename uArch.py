@@ -2,30 +2,45 @@ from Components.VMem import VMem
 from Components.ComputationUnit import ComputationUnit
 from tensorflow.keras.models import model_from_json
 import numpy as np
+import skimage.io as io
+import skimage.transform as trans
 
 '''
     Contains ...
     Loading model and weights with the keras API fow now
 '''
 class uArch():
-    def __init__(self, pe_array_size: int = 32, input_dim: tuple = (256, 256)) -> None:
-        self.vMem = VMem(input_dim=input_dim)
+    def __init__(self, pe_array_size: int = 32) -> None:
+        self.vMem = VMem()
         self.computationalUnit = ComputationUnit(pe_array_size=pe_array_size)
 
         # just for convenience
         self.model = None
 
     def loadModel(self, model_path: str) -> None:
+        '''
+        load model structure
+        '''
         with open(model_path, 'r') as f:
             self.model = model_from_json(f.read())
         print ('model successfully read from {}'.format(model_path))
 
     def loadWeight(self, weight_path: str) -> None:
+        '''
+        load model weight and bias
+        '''
         self.model.load_weights(weight_path)
         print ('weights successfully loaded from {}'.format(weight_path))
         self._loadVMem()
 
     def run(self, input_path: str) -> np.array:
+        '''
+      ✓ 1. read input image
+      ✓ 2. place it in vMem
+        3. start inference loop
+        '''
+        image = self._readInput(input_path)
+        self.vMem.loadInput(image)
         raise NotImplementedError
 
     def _loadVMem(self) -> None:
@@ -33,7 +48,7 @@ class uArch():
         Load the desired layers and their corresponding weights to the VMem
         Only Conv, MaxPool, UpSampling, Concat layers are recorded
 
-      ✓ 1. Create Layer class via the VMem API
+      ✓ 1. Add Layer class via the VMem API
       ✓ 2. Copy the weights and biases
       ✓ 3. Release the memory used by self.model
         '''
@@ -41,7 +56,7 @@ class uArch():
             layerConfig = layer.get_config()
             layerClassName = layer.__class__.__name__
             if layerClassName == 'Conv2D':
-                self.vMem.addConvLayer(name=layerConfig['name'], kernel_size=layerConfig['kernel_size'], strides=layerConfig['strides'], pad=layerConfig['padding'])
+                self.vMem.addConvLayer(name=layerConfig['name'], filters=layerConfig['filters'], kernel_size=layerConfig['kernel_size'], strides=layerConfig['strides'], pad=layerConfig['padding'])
                 self.vMem.setWeigtsBias(layer_name=layerConfig['name'], weights=layer.get_weights()[0], bias=layer.get_weights()[1])
             elif layerClassName == 'MaxPooling2D':
                 self.vMem.addMaxPoolingLayer(name=layerConfig['name'], kernel_size=layerConfig['pool_size'], strides=layerConfig['strides'], pad=layerConfig['padding'])
@@ -57,4 +72,14 @@ class uArch():
         del self.model
         self.model = None
 
-        self.vMem.layerStat()
+        # self.vMem.layerStat()
+
+    def _readInput(self, input_path: str) -> np.array:
+        '''
+        returns the gray scaled image in the shape of
+        (width, height, depth)
+        '''
+        img = io.imread(input_path, as_gray=True)
+        img = img / 255
+        img = trans.resize(image=img, output_shape=self.vMem.getModelInputShape())
+        return img

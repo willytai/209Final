@@ -9,11 +9,9 @@ def main(args: argparse.Namespace) -> None:
 
 def parseArgs() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-
     parser.add_argument('--model', type=str, required=True)
     parser.add_argument('--weight', type=str, required=True)
     parser.add_argument('--input', type=str, required=True)
-
     return parser.parse_args()
 
 if __name__ == '__main__':
