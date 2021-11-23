@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Union
 from UNet.Layer import Layer, LayerType, PadType
+from Utility import *
 
 '''
     1. Stores all the kernel weights and biases for each layer
@@ -23,13 +24,14 @@ class VMem():
     def loadInput(self, image: np.array) -> None:
         '''
       ✓ 1. initialize self.featureMapStorage
-        2. quantize image to 8 bit
-        3. load to self.featureMapStorage
+      ✓ 2. quantize image to 8 bit
+      ✓ 3. load to self.featureMapStorage
         '''
         inputDim = self.layerList[0].inputShape # from the first layer (input layer)
         filters = self.layerList[1].filters     # from the first conv layer (right after the input layer)
+        image_q = quantize8(image, fl=7)
         self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters), dtype=np.float32)
-        raise NotImplementedError
+        memcpy(self.featureMapStorage, image_q.reshape(-1))
 
     def addConvLayer(self, name: str, filters: int, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:
         kernel_size, strides, pad = self._paramTypeTransfrom(kernel_size, strides, pad)

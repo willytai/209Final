@@ -1,0 +1,111 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Bicyclist	UNet/data.py	/^Bicyclist = [0,128,192]$/;"	v
+Building	UNet/data.py	/^Building = [128,0,0]$/;"	v
+COLOR_DICT	UNet/data.py	/^COLOR_DICT = np.array([Sky, Building, Pole, Road, Pavement,$/;"	v
+CONCAT	UNet/Layer.py	/^    CONCAT = 4$/;"	v	class:LayerType
+CONV	UNet/Layer.py	/^    CONV = 1$/;"	v	class:LayerType
+Car	UNet/data.py	/^Car = [64,0,128]$/;"	v
+ComputationUnit	Components/ComputationUnit.py	/^class ComputationUnit():$/;"	c
+ComputationUnit	uArch.py	/^from Components.ComputationUnit import ComputationUnit$/;"	i
+DOWN_SAMPLE	UNet/Layer.py	/^    DOWN_SAMPLE = 2$/;"	v	class:LayerType
+Fence	UNet/data.py	/^Fence = [64,64,128]$/;"	v
+INPUT	UNet/Layer.py	/^    INPUT = 5$/;"	v	class:LayerType
+ImageDataGenerator	UNet/data.py	/^from tensorflow.keras.preprocessing.image import ImageDataGenerator$/;"	i
+Layer	Components/VMem.py	/^from UNet.Layer import Layer, LayerType, PadType$/;"	i
+Layer	UNet/Layer.py	/^class Layer():$/;"	c
+LayerType	Components/VMem.py	/^from UNet.Layer import Layer, LayerType, PadType$/;"	i
+LayerType	UNet/Layer.py	/^class LayerType(enum.Enum):$/;"	c
+LearningRateScheduler	UNet/model.py	/^from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler$/;"	i
+ModelCheckpoint	UNet/model.py	/^from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler$/;"	i
+NONE	UNet/Layer.py	/^    NONE = 3  # for non-convolutional layers$/;"	v	class:PadType
+PE	Components/ComputationUnit.py	/^class PE():$/;"	c
+PadType	Components/VMem.py	/^from UNet.Layer import Layer, LayerType, PadType$/;"	i
+PadType	UNet/Layer.py	/^class PadType(enum.Enum):$/;"	c
+Pavement	UNet/data.py	/^Pavement = [60,40,222]$/;"	v
+Pedestrian	UNet/data.py	/^Pedestrian = [64,64,0]$/;"	v
+Pole	UNet/data.py	/^Pole = [192,192,128]$/;"	v
+Road	UNet/data.py	/^Road = [128,64,128]$/;"	v
+SAME	UNet/Layer.py	/^    SAME = 1$/;"	v	class:PadType
+SignSymbol	UNet/data.py	/^SignSymbol = [192,128,128]$/;"	v
+Sky	UNet/data.py	/^Sky = [128,128,128]$/;"	v
+Tree	UNet/data.py	/^Tree = [128,128,0]$/;"	v
+UP_SAMPLE	UNet/Layer.py	/^    UP_SAMPLE = 3$/;"	v	class:LayerType
+Union	Components/VMem.py	/^from typing import Union$/;"	i
+Unlabelled	UNet/data.py	/^Unlabelled = [0,0,0]$/;"	v
+VALID	UNet/Layer.py	/^    VALID = 2$/;"	v	class:PadType
+VMem	Components/VMem.py	/^class VMem():$/;"	c
+VMem	uArch.py	/^from Components.VMem import VMem$/;"	i
+__init__	Components/ComputationUnit.py	/^    def __init__(self):$/;"	m	class:PE
+__init__	Components/ComputationUnit.py	/^    def __init__(self, pe_array_size: int) -> None:$/;"	m	class:ComputationUnit
+__init__	Components/VMem.py	/^    def __init__(self) -> None:$/;"	m	class:VMem
+__init__	UNet/Layer.py	/^    def __init__(self, layer_type: LayerType, name: str) -> None:$/;"	m	class:Layer
+__init__	uArch.py	/^    def __init__(self, pe_array_size: int = 32) -> None:$/;"	m	class:uArch
+__str__	UNet/Layer.py	/^    def __str__(self) -> str:$/;"	m	class:Layer	file:
+_loadVMem	uArch.py	/^    def _loadVMem(self) -> None:$/;"	m	class:uArch
+_paramTypeTransfrom	Components/VMem.py	/^    def _paramTypeTransfrom(self, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> tuple:$/;"	m	class:VMem
+_readInput	uArch.py	/^    def _readInput(self, input_path: str) -> np.array:$/;"	m	class:uArch
+addConcatLayer	Components/VMem.py	/^    def addConcatLayer(self, name: str, src: str, dst: str) -> None:$/;"	m	class:VMem
+addConvLayer	Components/VMem.py	/^    def addConvLayer(self, name: str, filters: int, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:$/;"	m	class:VMem
+addInputLayer	Components/VMem.py	/^    def addInputLayer(self, name: str, input_shape: tuple) -> None:$/;"	m	class:VMem
+addMaxPoolingLayer	Components/VMem.py	/^    def addMaxPoolingLayer(self, name: str, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:$/;"	m	class:VMem
+addUpSamplingLayer	Components/VMem.py	/^    def addUpSamplingLayer(self, name: str, kernel_size: Union[int,tuple]) -> None:$/;"	m	class:VMem
+adjustData	UNet/data.py	/^def adjustData(img,mask,flag_multi_class,num_class):$/;"	f
+argparse	Sim.py	/^import argparse$/;"	i
+enum	UNet/Layer.py	/^import enum$/;"	i
+geneTrainNpy	UNet/data.py	/^def geneTrainNpy(image_path,mask_path,flag_multi_class = False,num_class = 2,image_prefix = "image",mask_prefix = "mask",image_as_gray = True,mask_as_gray = True):$/;"	f
+getModelInputShape	Components/VMem.py	/^    def getModelInputShape(self) -> tuple:$/;"	m	class:VMem
+glob	UNet/data.py	/^import glob$/;"	i
+io	UNet/data.py	/^import skimage.io as io$/;"	i
+io	Utility.py	/^        import skimage.io as io$/;"	i
+io	uArch.py	/^import skimage.io as io$/;"	i
+labelVisualize	UNet/data.py	/^def labelVisualize(num_class,color_dict,img):$/;"	f
+layerStat	Components/VMem.py	/^    def layerStat(self):$/;"	m	class:VMem
+loadInput	Components/VMem.py	/^    def loadInput(self, image: np.array) -> None:$/;"	m	class:VMem
+loadModel	uArch.py	/^    def loadModel(self, model_path: str) -> None:$/;"	m	class:uArch
+loadWeight	uArch.py	/^    def loadWeight(self, weight_path: str) -> None:$/;"	m	class:uArch
+main	Sim.py	/^def main(args: argparse.Namespace) -> None:$/;"	f
+memcpy	Utility.py	/^def memcpy(dst: np.array, src: np.array, start: int = 0, count: int = -1) -> None:$/;"	f
+model	UNet/model.py	/^    model = unet()$/;"	v
+model	UNet/test.py	/^model = unet()$/;"	v
+model_from_json	uArch.py	/^from tensorflow.keras.models import model_from_json$/;"	i
+np	Components/VMem.py	/^import numpy as np$/;"	i
+np	UNet/Layer.py	/^import numpy as np$/;"	i
+np	UNet/data.py	/^import numpy as np $/;"	i
+np	Utility.py	/^import numpy as np$/;"	i
+np	uArch.py	/^import numpy as np$/;"	i
+os	UNet/data.py	/^import os$/;"	i
+parseArgs	Sim.py	/^def parseArgs() -> argparse.Namespace:$/;"	f
+print_function	UNet/data.py	/^from __future__ import print_function$/;"	i
+quantize8	Utility.py	/^def quantize8(value: np.array, fl: int) -> np.array:$/;"	f
+results	UNet/test.py	/^results = model.predict_generator(testGene,30,verbose=1)$/;"	v
+run	uArch.py	/^    def run(self, input_path: str) -> np.array:$/;"	m	class:uArch
+saveResult	UNet/data.py	/^def saveResult(save_path,npyfile,flag_multi_class = False,num_class = 2):$/;"	f
+setConcatParam	UNet/Layer.py	/^    def setConcatParam(self, src: str, dst: str) -> None:$/;"	m	class:Layer
+setConvParam	UNet/Layer.py	/^    def setConvParam(self, filters: int, kernel_size: tuple, strides: int, pad: PadType) -> None:$/;"	m	class:Layer
+setInputParam	UNet/Layer.py	/^    def setInputParam(self, input_shape: tuple) -> None:$/;"	m	class:Layer
+setMaxPoolingParam	UNet/Layer.py	/^    def setMaxPoolingParam(self, kernel_size: tuple, strides: int, pad: PadType) -> None:$/;"	m	class:Layer
+setUpSamplingParam	UNet/Layer.py	/^    def setUpSamplingParam(self, kernel_size: tuple) -> None:$/;"	m	class:Layer
+setWeigtsBias	Components/VMem.py	/^    def setWeigtsBias(self, layer_name: str, weights: np.array, bias: np.array) -> None:$/;"	m	class:VMem
+setWeigtsBias	UNet/Layer.py	/^    def setWeigtsBias(self, weights: np.array, bias: np.array) -> None:$/;"	m	class:Layer
+skimage	UNet/data.py	/^import skimage.io as io$/;"	i
+skimage	UNet/data.py	/^import skimage.transform as trans$/;"	i
+skimage	Utility.py	/^        import skimage.io as io$/;"	i
+skimage	Utility.py	/^        import skimage.transform as trans$/;"	i
+skimage	uArch.py	/^import skimage.io as io$/;"	i
+skimage	uArch.py	/^import skimage.transform as trans$/;"	i
+testGene	UNet/test.py	/^testGene = testGenerator("testData")$/;"	v
+testGenerator	UNet/data.py	/^def testGenerator(test_path,num_image = 30,target_size = (256,256),flag_multi_class = False,as_gray = True):$/;"	f
+test_memcpy	Utility.py	/^    def test_memcpy():$/;"	f	function:memcpy
+test_quantize8	Utility.py	/^    def test_quantize8():$/;"	f	function:memcpy
+trainGenerator	UNet/data.py	/^def trainGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,image_color_mode = "grayscale",$/;"	f
+trans	UNet/data.py	/^import skimage.transform as trans$/;"	i
+trans	Utility.py	/^        import skimage.transform as trans$/;"	i
+trans	uArch.py	/^import skimage.transform as trans$/;"	i
+uArch	Sim.py	/^from uArch import uArch$/;"	i
+uArch	uArch.py	/^class uArch():$/;"	c
+unet	UNet/model.py	/^def unet(pretrained_weights = None,input_size = (256,256,1)):$/;"	f
