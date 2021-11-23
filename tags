@@ -23,6 +23,9 @@ LayerType	UNet/Layer.py	/^class LayerType(enum.Enum):$/;"	c
 LearningRateScheduler	UNet/model.py	/^from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler$/;"	i
 ModelCheckpoint	UNet/model.py	/^from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler$/;"	i
 NONE	UNet/Layer.py	/^    NONE = 3  # for non-convolutional layers$/;"	v	class:PadType
+OutputBuffer	Components/OutputBuffer.py	/^class OutputBuffer():$/;"	c
+OutputBuffer	Components/VMem.py	/^from . import OutputBuffer as OutputBuffer$/;"	i
+OutputBuffer	uArch.py	/^from Components.OutputBuffer import OutputBuffer$/;"	i
 PE	Components/ComputationUnit.py	/^class PE():$/;"	c
 PadType	Components/VMem.py	/^from UNet.Layer import Layer, LayerType, PadType$/;"	i
 PadType	UNet/Layer.py	/^class PadType(enum.Enum):$/;"	c
@@ -38,10 +41,12 @@ UP_SAMPLE	UNet/Layer.py	/^    UP_SAMPLE = 3$/;"	v	class:LayerType
 Union	Components/VMem.py	/^from typing import Union$/;"	i
 Unlabelled	UNet/data.py	/^Unlabelled = [0,0,0]$/;"	v
 VALID	UNet/Layer.py	/^    VALID = 2$/;"	v	class:PadType
+VMem	Components/OutputBuffer.py	/^from . import VMem as VMem$/;"	i
 VMem	Components/VMem.py	/^class VMem():$/;"	c
 VMem	uArch.py	/^from Components.VMem import VMem$/;"	i
 __init__	Components/ComputationUnit.py	/^    def __init__(self):$/;"	m	class:PE
 __init__	Components/ComputationUnit.py	/^    def __init__(self, pe_array_size: int) -> None:$/;"	m	class:ComputationUnit
+__init__	Components/OutputBuffer.py	/^    def __init__(self) -> None:$/;"	m	class:OutputBuffer
 __init__	Components/VMem.py	/^    def __init__(self) -> None:$/;"	m	class:VMem
 __init__	UNet/Layer.py	/^    def __init__(self, layer_type: LayerType, name: str) -> None:$/;"	m	class:Layer
 __init__	uArch.py	/^    def __init__(self, pe_array_size: int = 32) -> None:$/;"	m	class:uArch
@@ -82,6 +87,7 @@ os	UNet/data.py	/^import os$/;"	i
 parseArgs	Sim.py	/^def parseArgs() -> argparse.Namespace:$/;"	f
 print_function	UNet/data.py	/^from __future__ import print_function$/;"	i
 quantize8	Utility.py	/^def quantize8(value: np.array, fl: int) -> np.array:$/;"	f
+requestOutput	Components/VMem.py	/^    def requestOutput(self, output_buffer: OutputBuffer) -> bool:$/;"	m	class:VMem
 results	UNet/test.py	/^results = model.predict_generator(testGene,30,verbose=1)$/;"	v
 run	uArch.py	/^    def run(self, input_path: str) -> np.array:$/;"	m	class:uArch
 saveResult	UNet/data.py	/^def saveResult(save_path,npyfile,flag_multi_class = False,num_class = 2):$/;"	f
@@ -109,3 +115,4 @@ trans	uArch.py	/^import skimage.transform as trans$/;"	i
 uArch	Sim.py	/^from uArch import uArch$/;"	i
 uArch	uArch.py	/^class uArch():$/;"	c
 unet	UNet/model.py	/^def unet(pretrained_weights = None,input_size = (256,256,1)):$/;"	f
+vMemWrite	Components/OutputBuffer.py	/^    def vMemWrite(self, v_mem: VMem) -> bool:$/;"	m	class:OutputBuffer

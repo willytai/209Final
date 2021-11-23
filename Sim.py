@@ -3,13 +3,21 @@ import argparse
 
 '''
 Download model weights from: 'https://drive.google.com/file/d/1ED_2y6CAPgSV4XP-Ytnb-5D8bijMZITr/view?usp=sharing'
+
+naming convention:
+    - class names are capitalized
+    - function params are <word1>_<word2>
+    - function names and variables are <word1><Word2>
+
+TODO:
+    remove all sanity checks and assertions when finished
 '''
 
 def main(args: argparse.Namespace) -> None:
     arch = uArch()
     arch.loadModel(args.model)
     arch.loadWeight(args.weight)
-    arch.run(args.input);
+    arch.run(args.input)
 
 def parseArgs() -> argparse.Namespace:
     parser = argparse.ArgumentParser()

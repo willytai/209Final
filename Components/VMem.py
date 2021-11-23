@@ -2,6 +2,7 @@ import numpy as np
 from typing import Union
 from UNet.Layer import Layer, LayerType, PadType
 from Utility import *
+from . import OutputBuffer as OutputBuffer
 
 '''
     1. Stores all the kernel weights and biases for each layer
@@ -14,12 +15,14 @@ from Utility import *
     - self.layerMap stores the name mapping of each layer
     - self.featureMapStorage is the storage for feature map, the maximum storage reuqired is
       input_width * input_height * #_of_filters_in_1st_conv
+    - self.outputBuffer references the output buffer for convenience
 '''
 class VMem():
     def __init__(self) -> None:
         self.layerList = list()
         self.layerMap = dict()
         self.featureMapStorage = None
+        self.outputBuffer = None
 
     def loadInput(self, image: np.array) -> None:
         '''
@@ -32,6 +35,19 @@ class VMem():
         image_q = quantize8(image, fl=7)
         self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters), dtype=np.float32)
         memcpy(self.featureMapStorage, image_q.reshape(-1))
+
+    def requestOutput(self) -> bool:
+        '''
+      ✓ 1. request output of the next layer from the output buffer
+      ✓ 2. return the state
+        '''
+        assert self.outputBuffer is not None
+        ret = self.outputBuffer.vMemWrite(self)
+        raise NotImplementedError
+        return ret
+
+    def linkOutputBuffer(self, output_buffer: OutputBuffer) -> None:
+        self.outputBuffer = output_buffer
 
     def addConvLayer(self, name: str, filters: int, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:
         kernel_size, strides, pad = self._paramTypeTransfrom(kernel_size, strides, pad)
