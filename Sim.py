@@ -8,6 +8,7 @@ naming convention:
     - class names are capitalized
     - function params are <word1>_<word2>
     - function names and variables are <word1><Word2>
+    - class functions meant for solely itself are named with a leading underscore
 
 TODO:
     remove all sanity checks and assertions when finished

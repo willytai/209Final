@@ -6,7 +6,7 @@ from . import ComputationUnit as ComputationUnit
 - self.residuals stores the required feature maps for the decoding path
 - self.activeBuffer is the storage of the output feature map for the current layer
   re-initialize it when the computation loop enters the next layer might be more convenient
-- self.computationalUnit references the computational unit for convenience
+- self.computationUnit references the computation unit for convenience
 - self.dataReady indicates whether the data is ready to be written to the external memory
 - self.end indicates whether the loop has ended (last layer or not)
 '''
@@ -15,7 +15,7 @@ class OutputBuffer():
     def __init__(self) -> None:
         self.residuals = None
         self.activeBuffer = None
-        self.computationalUnit = None
+        self.computationUnit = None
         self.dataReady = False
         self.end = False
 
@@ -38,7 +38,7 @@ class OutputBuffer():
     def checkData(self) -> None:
         '''
       ✓ 1. check if the current data is ready
-            - if not, request data from the computational unit until the whole output is computed
+            - if not, request data from the computation unit until the whole output is computed
         '''
         while not self.dataReady:
             self.requestData()
@@ -46,14 +46,14 @@ class OutputBuffer():
 
     def requestData(self) -> None:
         '''
-      ✓ 1. request new data from the computational unit
+      ✓ 1. request new data from the computation unit
             - computation
             - data write
       ✓ 2. update the status accordingly
         '''
-        assert self.computationalUnit is not None
-        self.computationalUnit.computeNextRound()
-        self.dataReady, self.end = self.computationalUnit.dataWrite(self)
+        assert self.computationUnit is not None
+        self.computationUnit.computeNextRound()
+        self.dataReady, self.end = self.computationUnit.dataWrite(self)
 
     def postProcess(self) -> None:
         '''
@@ -62,5 +62,5 @@ class OutputBuffer():
         '''
         raise NotImplementedError
 
-    def linkComputationalUnit(self, computational_unit: ComputationUnit) -> None:
-        self.computationalUnit = computational_unit
+    def linkComputationUnit(self, computation_unit: ComputationUnit) -> None:
+        self.computationUnit = computation_unit

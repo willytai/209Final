@@ -1,7 +1,8 @@
 from . import OutputBuffer as OutputBuffer
+from . import InputBuffer as InputBuffer
 
 '''
-    A PE is capable of doing 32 multiplications
+    A PE is capable of doing 32 multiplications by default
 '''
 class PE():
     def __init__(self):
@@ -10,25 +11,34 @@ class PE():
 '''
     1. Contains the PE array
     2. Channel based parallelism
-    - self.inputChannelIdx is the corresponding channels of the input feature map that are being processed currently. (np.array)
     - self.outputChannelIdx is the corresponding channels of the output feature that will be computed. (np.array)
-    - self.currentRound is the current round represented by the coordinate of the kernel. A total of (kernel width) * (kernel height) rounds are required. (tuple)
+    - self.inputBuffer references the InputBuffer for convenience
 '''
 class ComputationUnit():
     def __init__(self, pe_array_size: int) -> None:
         self.PEArray = list()
-        self.inputChannelIdx = None
         self.outputChannelIdx = None
-        self.currentRound = None
+        self.inputBuffer = None
 
     def computeNextRound(self) -> None:
         '''
-        1. data fetch
-        2. record self.inputChannelIdx, self.outputChannelIdx, self.currentRound
+      ✓ 1. data fetch
         3. assign task to PE
         4. acccumulate values for corresponding output channels
         '''
+        assert self.inputBuffer is not None
+        data = self.dataFetch()
+        '''
+        do this somewhere
+        1. record self.outputChannelIdx
+        '''
         raise NotImplementedError
+
+    def dataFetch(self) -> tuple:
+        return self.inputBuffer.sendData()
 
     def dataWrite(self, output_buffer: OutputBuffer) -> tuple:
         raise NotImplementedError
+
+    def linkInputBuffer(self, input_buffer: InputBuffer) -> None:
+        self.inputBuffer = input_buffer

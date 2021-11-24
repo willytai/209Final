@@ -1,6 +1,7 @@
 from Components.VMem import VMem
 from Components.ComputationUnit import ComputationUnit
 from Components.OutputBuffer import OutputBuffer
+from Components.InputBuffer import InputBuffer
 from tensorflow.keras.models import model_from_json
 import numpy as np
 import skimage.io as io
@@ -14,11 +15,14 @@ class uArch():
     def __init__(self, pe_array_size: int = 32) -> None:
         self.vMem = VMem()
         self.outputBuffer = OutputBuffer()
-        self.computationalUnit = ComputationUnit(pe_array_size=pe_array_size)
+        self.computationUnit = ComputationUnit(pe_array_size=pe_array_size)
+        self.inputBuffer = InputBuffer()
 
         # link the components
         self.vMem.linkOutputBuffer(self.outputBuffer)
-        self.outputBuffer.linkComputationalUnit(self.computationalUnit)
+        self.outputBuffer.linkComputationUnit(self.computationUnit)
+        self.computationUnit.linkInputBuffer(self.inputBuffer)
+        self.inputBuffer.linkVMem(self.vMem)
 
         # indicates whether the inference loop has completed
         self.done = False
