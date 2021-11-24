@@ -3,3 +3,4 @@ unetRef
 __pycache__
 *.hdf5
 *.swp
+.DS_Store

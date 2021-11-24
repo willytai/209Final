@@ -22,21 +22,23 @@ class OutputBuffer():
     def vMemWrite(self, v_mem: VMem) -> bool:
         '''
       ✓ 1. verify the current data
-            - mem write when ready
-      ✓ 2. check for the status of the output
+      ✓ 2. post-processing
+      ✓ 3. mem write
+      ✓ 4. reset the active buffer
+      ✓ 5. check for the status of the output
             - if the computed output is for the final layer, return True
             - otherwise, return False
         '''
         self.checkData()
+        self.postProcess()
         v_mem.write(self.activeBuffer)
+        self.activeBuffer = None
         return self.end
 
     def checkData(self) -> None:
         '''
       ✓ 1. check if the current data is ready
             - if not, request data from the computational unit until the whole output is computed
-        2. when the data is ready, add bias and do activation post-processing
-        3. check for other required post-processing (pooling, upsampling, concatenation)
         '''
         while not self.dataReady:
             self.requestData()
@@ -45,10 +47,20 @@ class OutputBuffer():
     def requestData(self) -> None:
         '''
       ✓ 1. request new data from the computational unit
+            - computation
+            - data write
       ✓ 2. update the status accordingly
         '''
         assert self.computationalUnit is not None
+        self.computationalUnit.computeNextRound()
         self.dataReady, self.end = self.computationalUnit.dataWrite(self)
+
+    def postProcess(self) -> None:
+        '''
+        1. add bias and do activation post-processing
+        2. check for other required post-processing (pooling, upsampling, concatenation)
+        '''
+        raise NotImplementedError
 
     def linkComputationalUnit(self, computational_unit: ComputationUnit) -> None:
         self.computationalUnit = computational_unit
