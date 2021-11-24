@@ -34,7 +34,7 @@ class VMem():
         filters = self.layerList[1].filters     # from the first conv layer (right after the input layer)
         image_q = quantize8(image, fl=7)
         self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters), dtype=np.float32)
-        memcpy(self.featureMapStorage, image_q.reshape(-1))
+        self.write(image_q)
 
     def requestOutput(self) -> bool:
         '''
@@ -45,6 +45,12 @@ class VMem():
         ret = self.outputBuffer.vMemWrite(self)
         raise NotImplementedError
         return ret
+
+    def write(self, data: np.array) -> None:
+        '''
+        copy data to self.featureMapStorage
+        '''
+        memcpy(self.featureMapStorage, data.reshape(-1))
 
     def linkOutputBuffer(self, output_buffer: OutputBuffer) -> None:
         self.outputBuffer = output_buffer

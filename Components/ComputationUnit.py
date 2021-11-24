@@ -1,3 +1,4 @@
+from . import OutputBuffer as OutputBuffer
 
 class PE():
     def __init__(self):
@@ -10,3 +11,6 @@ class PE():
 class ComputationUnit():
     def __init__(self, pe_array_size: int) -> None:
         self.PEArray = list()
+
+    def dataWrite(self, output_buffer: OutputBuffer) -> tuple:
+        raise NotImplementedError

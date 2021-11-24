@@ -11,6 +11,7 @@ CONCAT	UNet/Layer.py	/^    CONCAT = 4$/;"	v	class:LayerType
 CONV	UNet/Layer.py	/^    CONV = 1$/;"	v	class:LayerType
 Car	UNet/data.py	/^Car = [64,0,128]$/;"	v
 ComputationUnit	Components/ComputationUnit.py	/^class ComputationUnit():$/;"	c
+ComputationUnit	Components/OutputBuffer.py	/^from . import ComputationUnit as ComputationUnit$/;"	i
 ComputationUnit	uArch.py	/^from Components.ComputationUnit import ComputationUnit$/;"	i
 DOWN_SAMPLE	UNet/Layer.py	/^    DOWN_SAMPLE = 2$/;"	v	class:LayerType
 Fence	UNet/data.py	/^Fence = [64,64,128]$/;"	v
@@ -23,6 +24,7 @@ LayerType	UNet/Layer.py	/^class LayerType(enum.Enum):$/;"	c
 LearningRateScheduler	UNet/model.py	/^from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler$/;"	i
 ModelCheckpoint	UNet/model.py	/^from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler$/;"	i
 NONE	UNet/Layer.py	/^    NONE = 3  # for non-convolutional layers$/;"	v	class:PadType
+OutputBuffer	Components/ComputationUnit.py	/^from . import OutputBuffer as OutputBuffer$/;"	i
 OutputBuffer	Components/OutputBuffer.py	/^class OutputBuffer():$/;"	c
 OutputBuffer	Components/VMem.py	/^from . import OutputBuffer as OutputBuffer$/;"	i
 OutputBuffer	uArch.py	/^from Components.OutputBuffer import OutputBuffer$/;"	i
@@ -61,6 +63,7 @@ addMaxPoolingLayer	Components/VMem.py	/^    def addMaxPoolingLayer(self, name: s
 addUpSamplingLayer	Components/VMem.py	/^    def addUpSamplingLayer(self, name: str, kernel_size: Union[int,tuple]) -> None:$/;"	m	class:VMem
 adjustData	UNet/data.py	/^def adjustData(img,mask,flag_multi_class,num_class):$/;"	f
 argparse	Sim.py	/^import argparse$/;"	i
+dataWrite	Components/ComputationUnit.py	/^    def dataWrite(self, output_buffer: OutputBuffer) -> tuple:$/;"	m	class:ComputationUnit
 enum	UNet/Layer.py	/^import enum$/;"	i
 geneTrainNpy	UNet/data.py	/^def geneTrainNpy(image_path,mask_path,flag_multi_class = False,num_class = 2,image_prefix = "image",mask_prefix = "mask",image_as_gray = True,mask_as_gray = True):$/;"	f
 getModelInputShape	Components/VMem.py	/^    def getModelInputShape(self) -> tuple:$/;"	m	class:VMem
@@ -70,6 +73,8 @@ io	Utility.py	/^        import skimage.io as io$/;"	i
 io	uArch.py	/^import skimage.io as io$/;"	i
 labelVisualize	UNet/data.py	/^def labelVisualize(num_class,color_dict,img):$/;"	f
 layerStat	Components/VMem.py	/^    def layerStat(self):$/;"	m	class:VMem
+linkComputationalUnit	Components/OutputBuffer.py	/^    def linkComputationalUnit(self, computational_unit: ComputationUnit) -> None:$/;"	m	class:OutputBuffer
+linkOutputBuffer	Components/VMem.py	/^    def linkOutputBuffer(self, output_buffer: OutputBuffer) -> None:$/;"	m	class:VMem
 loadInput	Components/VMem.py	/^    def loadInput(self, image: np.array) -> None:$/;"	m	class:VMem
 loadModel	uArch.py	/^    def loadModel(self, model_path: str) -> None:$/;"	m	class:uArch
 loadWeight	uArch.py	/^    def loadWeight(self, weight_path: str) -> None:$/;"	m	class:uArch
@@ -87,7 +92,8 @@ os	UNet/data.py	/^import os$/;"	i
 parseArgs	Sim.py	/^def parseArgs() -> argparse.Namespace:$/;"	f
 print_function	UNet/data.py	/^from __future__ import print_function$/;"	i
 quantize8	Utility.py	/^def quantize8(value: np.array, fl: int) -> np.array:$/;"	f
-requestOutput	Components/VMem.py	/^    def requestOutput(self, output_buffer: OutputBuffer) -> bool:$/;"	m	class:VMem
+requestData	Components/OutputBuffer.py	/^    def requestData(self) -> None:$/;"	m	class:OutputBuffer
+requestOutput	Components/VMem.py	/^    def requestOutput(self) -> bool:$/;"	m	class:VMem
 results	UNet/test.py	/^results = model.predict_generator(testGene,30,verbose=1)$/;"	v
 run	uArch.py	/^    def run(self, input_path: str) -> np.array:$/;"	m	class:uArch
 saveResult	UNet/data.py	/^def saveResult(save_path,npyfile,flag_multi_class = False,num_class = 2):$/;"	f
@@ -116,3 +122,4 @@ uArch	Sim.py	/^from uArch import uArch$/;"	i
 uArch	uArch.py	/^class uArch():$/;"	c
 unet	UNet/model.py	/^def unet(pretrained_weights = None,input_size = (256,256,1)):$/;"	f
 vMemWrite	Components/OutputBuffer.py	/^    def vMemWrite(self, v_mem: VMem) -> bool:$/;"	m	class:OutputBuffer
+write	Components/VMem.py	/^    def write(self, data: np.array) -> None:$/;"	m	class:VMem
