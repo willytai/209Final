@@ -33,8 +33,8 @@ class VMem():
       ✓ 2. quantize image to 8 bit
       ✓ 3. load to self.featureMapStorage
         '''
-        inputDim = self.layerList[0].inputShape # from the first layer (input layer)
-        filters = self.layerList[1].filters     # from the first conv layer (right after the input layer)
+        inputDim = self.layerList[0].getInputShape() # from the first layer (input layer)
+        filters = self.layerList[1].filters          # from the first conv layer (right after the input layer)
         image_q = quantize8(image, fl=7)
         self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters), dtype=np.float32)
         self.write(image_q)
@@ -49,14 +49,35 @@ class VMem():
         raise NotImplementedError
         return ret
 
-    def read(self, input_buffer: InputBuffer) -> None:
+    def send(self, input_buffer: InputBuffer) -> None:
         '''
-        1. read next conv to input buffer
-        2. read next kernel to input buffer
+      ✓ 1. read next conv to input buffer
+            - do the padding here
+      ✓ 2. read next kernel to input buffer
         3. read next strides and set kernel pos to input buffer
+        4. send instruction to the output buffer for buffer initialization
         '''
-        print (self.layerList[self.layerID])
-        print (self.featureMapStorage)
+        # skip input layer
+        if self.layerList[self.layerID].type == LayerType.INPUT:
+            self.layerID += 1
+        assert self.layerList[self.layerID].type == LayerType.CONV
+        targetLayer = self.layerList[self.layerID]
+        inputShape = targetLayer.getInputShape()
+        inputSize = inputShape[0]*inputShape[1]*inputShape[2]
+
+        # padding stuffs and feature map
+        assert targetLayer.pad == PadType.SAME or targetLayer.kernel_size[0] == 1
+        padFirst = (targetLayer.kernel_size[0] - 1) // 2
+        padLast = (targetLayer.kernel_size[0] - 1) // 2
+        if targetLayer.kernel_size[0] % 2 == 0:
+            padFirst += 1
+        input_buffer.fmBuffer = np.zeros((inputShape[0]+padFirst+padLast, inputShape[1]+padFirst+padLast, inputShape[2]))
+        input_buffer.fmBuffer[padFirst:padFirst+inputShape[0],
+                              padFirst:padFirst+inputShape[1],
+                              :] = self.featureMapStorage[:inputSize].reshape(inputShape)
+
+        # kernel buffer (kernel_x, kernel_y, kernel_z, # kernels)
+        input_buffer.krnlBuffer = targetLayer.weights
         raise NotImplementedError
 
     def write(self, data: np.array) -> None:
@@ -116,7 +137,7 @@ class VMem():
         self.layerMap[layer_name].setWeigtsBias(weights, bias)
 
     def getModelInputShape(self) -> tuple:
-        return self.layerList[0].inputShape
+        return self.layerList[0].getInputShape()
 
     def layerStat(self):
         for layer in self.layerList: print (layer)

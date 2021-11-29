@@ -62,12 +62,10 @@ class InputBuffer():
     def _read(self) -> None:
         '''
         1. read the next conv layer from VMem and load feature map and kernel
-        2. send instruction to the output buffer for buffer initialization
-        3. reset self.krnlPos
-        4. do the padding here
+        2. reset self.krnlPos
         '''
         assert self.vMem is not None
-        self.vMem.read(self)
+        self.vMem.send(self)
         raise NotImplementedError
 
     def _nextRound(self) -> tuple:

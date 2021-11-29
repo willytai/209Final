@@ -74,13 +74,17 @@ class Layer():
         self.weights = np.array(weights)
         self.bias = np.array(bias)
 
+    def getInputShape(self) -> tuple:
+        assert len(self.inputShape) == 1
+        return self.inputShape[0]
+
     def computeShape(self, layer_map: dict, input_shape: tuple) -> tuple:
         '''
         compute output shape according to input shape
         '''
         self.inputShape = [input_shape]
         if self.type == LayerType.INPUT:
-            self.outputShape = tuple(self.inputShape)
+            self.outputShape = tuple(self.inputShape[0])
         elif self.type == LayerType.CONV:
             self.outputShape = self._computeConvShape(input_shape)
         elif self.type == LayerType.DOWN_SAMPLE:
@@ -96,7 +100,7 @@ class Layer():
         return self.outputShape
 
     def _computeConvShape(self, input_shape: tuple) -> tuple:
-        assert self.kernel_size[0] == self.kernel_size[1], 'only support square kernels'
+        assert self.kernel_size[0] == self.kernel_size[1], 'only support square kernels, {}'.format(self)
         assert self.pad == PadType.SAME or self.kernel_size[0] == 1, 'only support zero padding for conv layers with kernel size greater than 1: {}'.format(self)
         return (input_shape[0] // self.strides, input_shape[1] // self.strides, self.filters)
 

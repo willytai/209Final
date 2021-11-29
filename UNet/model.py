@@ -62,5 +62,5 @@ def unet(pretrained_weights = None,input_size = (256,256,1)):
 
 if __name__ == '__main__':
     model = unet()
-    with open('unet_model.json', 'w') as f:
-        f.write(model.to_json())
+    # with open('unet_model.json', 'w') as f:
+    #     f.write(model.to_json())
