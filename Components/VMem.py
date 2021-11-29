@@ -1,8 +1,9 @@
 import numpy as np
 from typing import Union
-from UNet.Layer import Layer, LayerType, PadType
+from Layer import Layer, LayerType, PadType
 from Utility import *
 from . import OutputBuffer as OutputBuffer
+from . import InputBuffer as InputBuffer
 
 '''
     1. Stores all the kernel weights and biases for each layer
@@ -13,6 +14,7 @@ from . import OutputBuffer as OutputBuffer
 
     - self.layerList stores all the operational layers in order
     - self.layerMap stores the name mapping of each layer
+    - self.layerID is the index of the current layer
     - self.featureMapStorage is the storage for feature map, the maximum storage reuqired is
       input_width * input_height * #_of_filters_in_1st_conv
     - self.outputBuffer references the output buffer for convenience
@@ -21,6 +23,7 @@ class VMem():
     def __init__(self) -> None:
         self.layerList = list()
         self.layerMap = dict()
+        self.layerID = 0
         self.featureMapStorage = None
         self.outputBuffer = None
 
@@ -45,6 +48,16 @@ class VMem():
         ret = self.outputBuffer.vMemWrite(self)
         raise NotImplementedError
         return ret
+
+    def read(self, input_buffer: InputBuffer) -> None:
+        '''
+        1. read next conv to input buffer
+        2. read next kernel to input buffer
+        3. read next strides and set kernel pos to input buffer
+        '''
+        print (self.layerList[self.layerID])
+        print (self.featureMapStorage)
+        raise NotImplementedError
 
     def write(self, data: np.array) -> None:
         '''
@@ -90,6 +103,12 @@ class VMem():
     def addInputLayer(self, name: str, input_shape: tuple) -> None:
         newLayer = Layer(LayerType.INPUT, name)
         newLayer.setInputParam(input_shape=input_shape)
+        self.layerList.append(newLayer)
+        self.layerMap[name] = self.layerList[-1]
+
+    def addDropoutLayer(self, name: str, rate: float) -> None:
+        newLayer = Layer(LayerType.DROP_OUT, name)
+        newLayer.setDropoutParam(rate=rate)
         self.layerList.append(newLayer)
         self.layerMap[name] = self.layerList[-1]
 

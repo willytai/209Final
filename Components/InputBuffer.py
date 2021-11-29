@@ -22,7 +22,7 @@ class KernelPostion():
 
         self.position = (0, 0)
         self.curIteration = (0, 0)
-        self.startDepthId = 0
+        self.startId = 0
 
     def next(self) -> None:
         '''
@@ -66,6 +66,8 @@ class InputBuffer():
         3. reset self.krnlPos
         4. do the padding here
         '''
+        assert self.vMem is not None
+        self.vMem.read(self)
         raise NotImplementedError
 
     def _nextRound(self) -> tuple:
