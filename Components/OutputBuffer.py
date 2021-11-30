@@ -1,3 +1,4 @@
+import numpy as np
 from . import VMem as VMem
 from . import ComputationUnit as ComputationUnit
 
@@ -18,6 +19,7 @@ class OutputBuffer():
         self.computationUnit = None
         self.dataReady = False
         self.end = False
+        self.postProcessInfo = dict()
 
     def vMemWrite(self, v_mem: VMem) -> bool:
         '''
@@ -31,6 +33,7 @@ class OutputBuffer():
         '''
         self.checkData()
         self.postProcess()
+        assert self.activeBuffer is not None
         v_mem.write(self.activeBuffer)
         self.activeBuffer = None
         return self.end
@@ -54,6 +57,13 @@ class OutputBuffer():
         assert self.computationUnit is not None
         self.computationUnit.computeNextRound()
         self.dataReady, self.end = self.computationUnit.dataWrite(self)
+
+    def resetBuffer(self, shape: tuple) -> None:
+        self.activeBuffer = np.zeros(shape)
+
+    def setBiasActivation(self, bias: np.array, activation: str) -> None:
+        self.postProcessInfo['bias'] = bias
+        self.postProcessInfo['activation'] = activation
 
     def postProcess(self) -> None:
         '''

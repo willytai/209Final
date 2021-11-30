@@ -24,6 +24,7 @@ class Layer():
         self.type = layer_type
         self.name = name
         self.pad = None
+        self.activation = None
         self.kernel_size = None
         self.filters = None
         self.strides = None
@@ -35,9 +36,10 @@ class Layer():
         self.inputShape = None # a list of input shapes that the layer takes
         self.outputShape = None
 
-    def setConvParam(self, filters: int, kernel_size: tuple, strides: int, pad: PadType) -> None:
+    def setConvParam(self, filters: int, activation: str, kernel_size: tuple, strides: int, pad: PadType) -> None:
         assert PadType is not None
         self.filters = filters
+        self.activation = activation
         self.kernel_size = kernel_size
         self.strides = strides
         self.pad = pad

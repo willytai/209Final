@@ -77,6 +77,7 @@ class uArch():
             if layerClassName == 'Conv2D':
                 self.vMem.addConvLayer(name=layerConfig['name'],
                                        filters=layerConfig['filters'],
+                                       activation=layerConfig['activation'],
                                        kernel_size=layerConfig['kernel_size'],
                                        strides=layerConfig['strides'],
                                        pad=layerConfig['padding'])

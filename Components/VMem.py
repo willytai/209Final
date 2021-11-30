@@ -54,8 +54,10 @@ class VMem():
       ✓ 1. read next conv to input buffer
             - do the padding here
       ✓ 2. read next kernel to input buffer
-        3. read next strides and set kernel pos to input buffer
-        4. send instruction to the output buffer for buffer initialization
+      ✓ 3. read next strides and set kernel pos to input buffer
+            - reset input_buffer.krnlPos
+      ✓ 4. send instruction to the output buffer for buffer initialization
+        5. perpare output buffer for post-processing
         '''
         # skip input layer
         if self.layerList[self.layerID].type == LayerType.INPUT:
@@ -78,7 +80,21 @@ class VMem():
 
         # kernel buffer (kernel_x, kernel_y, kernel_z, # kernels)
         input_buffer.krnlBuffer = targetLayer.weights
-        raise NotImplementedError
+
+        # kernel position initialization
+        input_buffer.resetKernelPosition(strides=targetLayer.strides,
+                                         kernel_num=targetLayer.filters,
+                                         kernel_size=targetLayer.kernel_size,
+                                         output_shape=targetLayer.outputShape)
+
+        # output buffer initialization (reset)
+        self.outputBuffer.resetBuffer(targetLayer.outputShape)
+
+        # queue post-processing actions
+        self.outputBuffer.setBiasActivation(bias=targetLayer.bias, activation=targetLayer.activation)
+        self.layerID += 1
+        while self.layerID < len(self.layerList) and self.layerList[self.layerID].type != LayerType.CONV:
+            raise NotImplementedError
 
     def write(self, data: np.array) -> None:
         '''
@@ -89,10 +105,10 @@ class VMem():
     def linkOutputBuffer(self, output_buffer: OutputBuffer) -> None:
         self.outputBuffer = output_buffer
 
-    def addConvLayer(self, name: str, filters: int, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:
+    def addConvLayer(self, name: str, filters: int, activation: str, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:
         kernel_size, strides, pad = self._paramTypeTransfrom(kernel_size, strides, pad)
         newLayer = Layer(LayerType.CONV, name)
-        newLayer.setConvParam(filters=filters, kernel_size=kernel_size, strides=strides, pad=pad)
+        newLayer.setConvParam(filters=filters, activation=activation, kernel_size=kernel_size, strides=strides, pad=pad)
         self.layerList.append(newLayer)
         self.layerMap[name] = self.layerList[-1]
 
