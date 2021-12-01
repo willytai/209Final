@@ -62,5 +62,22 @@ def unet(pretrained_weights = None,input_size = (256,256,1)):
 
 if __name__ == '__main__':
     model = unet()
+    model.load_weights("unet_model.hdf5")
+    layer1 = model.get_layer('conv2d')
+    _1_layer_model = Model(inputs = model.input, outputs = layer1.output)
+    weights = layer1.get_weights()[0]
+    bias = layer1.get_weights()[1]
+    print ('weights', weights[:,:,:,0])
+    print ('bias', bias)
+
+    import skimage.io as io
+    import skimage.transform as trans
+    import numpy as np
+    img = io.imread('./testData/0.png', as_gray=True)
+    img = img / 255
+    img = trans.resize(image=img, output_shape=(256, 256, 1))
+    # _1_out = _1_layer_model.predict(np.ones((1, 256, 256, 1)))[0]
+    _1_out = _1_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    np.save('layer1_conv_output_golden.npy', _1_out)
     # with open('unet_model.json', 'w') as f:
     #     f.write(model.to_json())

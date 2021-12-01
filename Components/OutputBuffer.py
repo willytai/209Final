@@ -32,10 +32,12 @@ class OutputBuffer():
             - otherwise, return False
         '''
         self.checkData()
-        self.postProcess()
         assert self.activeBuffer is not None
+        self.postProcess()
         v_mem.write(self.activeBuffer)
         self.activeBuffer = None
+        if self.end is None:
+            raise NotImplementedError
         return self.end
 
     def checkData(self) -> None:
@@ -45,7 +47,7 @@ class OutputBuffer():
         '''
         while not self.dataReady:
             self.requestData()
-        raise NotImplementedError
+        # raise NotImplementedError
 
     def requestData(self) -> None:
         '''
@@ -57,6 +59,13 @@ class OutputBuffer():
         assert self.computationUnit is not None
         self.computationUnit.computeNextRound()
         self.dataReady, self.end = self.computationUnit.dataWrite(self)
+
+    def writeData(self, data: float, position: tuple, channel: int) -> None:
+        '''
+        accumulate the calculated value to the desired position of the acitve buffer
+        '''
+        assert self.activeBuffer is not None
+        self.activeBuffer[position[0], position[1], channel] += data
 
     def resetBuffer(self, shape: tuple) -> None:
         self.activeBuffer = np.zeros(shape)
@@ -70,6 +79,15 @@ class OutputBuffer():
         1. add bias and do activation post-processing
         2. check for other required post-processing (pooling, upsampling, concatenation)
         '''
+        # bias
+        self.activeBuffer = self.activeBuffer + self.postProcessInfo['bias']
+
+        # activation
+        assert self.postProcessInfo['activation'] == 'relu'
+        self.activeBuffer = np.maximum(0, self.activeBuffer)
+
+        np.save('layer1_conv_output.npy', self.activeBuffer)
+
         raise NotImplementedError
 
     def linkComputationUnit(self, computation_unit: ComputationUnit) -> None:

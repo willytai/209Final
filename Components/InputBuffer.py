@@ -56,6 +56,7 @@ class KernelPostion():
                         self.done = True
                     else:
                         self.curIteration += 1
+                        print ('incr iteration: {}'.format(self.curIteration))
                 else:
                     self.position[0] += 1
             else:
@@ -110,9 +111,7 @@ class InputBuffer():
         '''
         if self.fmBuffer is None or self.krnlBuffer is None:
             self._read()
-        else:
-            if not self.krnlPos.hasNext():
-                pass
+        elif not self.krnlPos.hasNext():
             raise NotImplementedError
 
     def _read(self) -> None:
@@ -137,3 +136,6 @@ class InputBuffer():
 
     def linkVMem(self, v_mem: VMem) -> None:
         self.vMem = v_mem
+
+    def isRoundFinished(self) -> bool:
+        return not self.krnlPos.hasNext()
