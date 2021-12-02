@@ -41,7 +41,7 @@ class KernelPostion():
             - the curIteration trasformed into coordinate in kernel space
         '''
         max_kernel_usage = min(max_kernel_usage, self.kernelNum-self.startId)
-        kernelIDs = np.array(range(self.startId, self.startId+max_kernel_usage))
+        kernelIDs = range(self.startId, self.startId+max_kernel_usage)
         globalPos = tuple(self.position)
         kernelPos = tuple([self.curIteration//self.kernelSize[1], self.curIteration%self.kernelSize[0]])
 

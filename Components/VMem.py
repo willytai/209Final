@@ -41,16 +41,19 @@ class VMem():
         self.write(image_q)
 
     def requestOutput(self) -> bool:
+        print ('requesting output')
         '''
       ✓ 1. request output of the next layer from the output buffer
       ✓ 2. return the state
         '''
         assert self.outputBuffer is not None
         ret = self.outputBuffer.vMemWrite(self)
-        raise NotImplementedError
+        # raise NotImplementedError
         return ret
 
     def send(self, input_buffer: InputBuffer) -> None:
+        print ('calling vmem::send')
+        print ('layerid', self.layerID)
         '''
       ✓ 1. read next conv to input buffer
             - do the padding here
@@ -95,7 +98,12 @@ class VMem():
         self.outputBuffer.setBiasActivation(bias=targetLayer.bias, activation=targetLayer.activation)
         self.layerID += 1
         while self.layerID < len(self.layerList) and self.layerList[self.layerID].type != LayerType.CONV:
-            raise NotImplementedError
+            targetLayer = self.layerList[self.layerID]
+            if targetLayer.type != LayerType.DOWN_SAMPLE:
+                raise NotImplementedError
+            else:
+                self.outputBuffer.setPool(targetLayer.kernel_size)
+            self.layerID += 1
 
     def write(self, data: np.array) -> None:
         '''

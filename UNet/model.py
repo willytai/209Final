@@ -64,11 +64,15 @@ if __name__ == '__main__':
     model = unet()
     model.load_weights("unet_model.hdf5")
     layer1 = model.get_layer('conv2d')
+    layer2 = model.get_layer('conv2d_1')
+    layer3 = model.get_layer('max_pooling2d')
     _1_layer_model = Model(inputs = model.input, outputs = layer1.output)
-    weights = layer1.get_weights()[0]
-    bias = layer1.get_weights()[1]
-    print ('weights', weights[:,:,:,0])
-    print ('bias', bias)
+    _2_layer_model = Model(inputs = model.input, outputs = layer2.output)
+    _3_layer_model = Model(inputs = model.input, outputs = layer3.output)
+    # weights = layer1.get_weights()[0]
+    # bias = layer1.get_weights()[1]
+    # print ('weights', weights[:,:,:,0])
+    # print ('bias', bias)
 
     import skimage.io as io
     import skimage.transform as trans
@@ -78,6 +82,10 @@ if __name__ == '__main__':
     img = trans.resize(image=img, output_shape=(256, 256, 1))
     # _1_out = _1_layer_model.predict(np.ones((1, 256, 256, 1)))[0]
     _1_out = _1_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    _2_out = _2_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    _3_out = _3_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
     np.save('layer1_conv_output_golden.npy', _1_out)
+    np.save('layer2_conv_output_golden.npy', _2_out)
+    np.save('layer3_maxpool_output_golden.npy', _3_out)
     # with open('unet_model.json', 'w') as f:
     #     f.write(model.to_json())

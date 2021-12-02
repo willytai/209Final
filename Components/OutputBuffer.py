@@ -1,7 +1,7 @@
 import numpy as np
+from skimage.measure import block_reduce
 from . import VMem as VMem
 from . import ComputationUnit as ComputationUnit
-
 
 '''
 - self.residuals stores the required feature maps for the decoding path
@@ -21,6 +21,8 @@ class OutputBuffer():
         self.end = False
         self.postProcessInfo = dict()
 
+        self.read_layer1 = True
+
     def vMemWrite(self, v_mem: VMem) -> bool:
         '''
       ✓ 1. verify the current data
@@ -31,6 +33,20 @@ class OutputBuffer():
             - if the computed output is for the final layer, return True
             - otherwise, return False
         '''
+
+        if self.read_layer1:
+            print ('this is temporary, reading precomputed layer1 output')
+            v_mem.layerID += 2
+            self.read_layer1 = False
+            self.activeBuffer = np.load('layer1_conv_output.npy')
+            self.dataReady = True
+            v_mem.write(self.activeBuffer)
+            self.activeBuffer = None
+            self.dataReady = False
+            if self.end is None:
+                raise NotImplementedError
+            return self.end
+
         self.checkData()
         assert self.activeBuffer is not None
         self.postProcess()
@@ -60,12 +76,12 @@ class OutputBuffer():
         self.computationUnit.computeNextRound()
         self.dataReady, self.end = self.computationUnit.dataWrite(self)
 
-    def writeData(self, data: float, position: tuple, channel: int) -> None:
+    def writeData(self, data: float, position: tuple, channels: range) -> None:
         '''
         accumulate the calculated value to the desired position of the acitve buffer
         '''
         assert self.activeBuffer is not None
-        self.activeBuffer[position[0], position[1], channel] += data
+        self.activeBuffer[position[0], position[1], channels] += data
 
     def resetBuffer(self, shape: tuple) -> None:
         self.activeBuffer = np.zeros(shape)
@@ -73,6 +89,9 @@ class OutputBuffer():
     def setBiasActivation(self, bias: np.array, activation: str) -> None:
         self.postProcessInfo['bias'] = bias
         self.postProcessInfo['activation'] = activation
+
+    def setPool(self, pool_size: tuple) -> None:
+        self.postProcessInfo['pooling'] = pool_size
 
     def postProcess(self) -> None:
         '''
@@ -86,8 +105,17 @@ class OutputBuffer():
         assert self.postProcessInfo['activation'] == 'relu'
         self.activeBuffer = np.maximum(0, self.activeBuffer)
 
-        np.save('layer1_conv_output.npy', self.activeBuffer)
+        np.save('layer2_conv_output.npy', self.activeBuffer)
 
+        # pooling with skimage API
+        if 'pooling' in self.postProcessInfo:
+            pool_size = self.postProcessInfo['pooling']
+            pool_size = (pool_size[0], pool_size[1], 1)
+            self.activeBuffer = block_reduce(self.activeBuffer, block_size=(pool_size), func=np.max)
+
+            np.save('layer3_maxpool_output.npy', self.activeBuffer)
+
+        self.postProcessInfo = dict()
         raise NotImplementedError
 
     def linkComputationUnit(self, computation_unit: ComputationUnit) -> None:
