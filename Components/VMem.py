@@ -77,7 +77,7 @@ class VMem():
         padFirst = (targetLayer.kernel_size[0] - 1) // 2
         padLast = (targetLayer.kernel_size[0] - 1) // 2
         if targetLayer.kernel_size[0] % 2 == 0:
-            padFirst += 1
+            padLast += 1
         input_buffer.fmBuffer = np.zeros((inputShape[0]+padFirst+padLast, inputShape[1]+padFirst+padLast, inputShape[2]))
         input_buffer.fmBuffer[padFirst:padFirst+inputShape[0],
                               padFirst:padFirst+inputShape[1],
@@ -100,9 +100,11 @@ class VMem():
         # post-processing actions
         # bias & activation
         self.outputBuffer.setBiasActivation(bias=targetLayer.bias, activation=targetLayer.activation)
+
         # save intermediate feature map for concatenation
         if targetLayer.name in self.concatCandidates:
             self.outputBuffer.setSaveResidual()
+
         # pooling or upsampling and concatenation
         self.layerID += 1
         while self.layerID < len(self.layerList) and self.layerList[self.layerID].type != LayerType.CONV:
@@ -116,6 +118,10 @@ class VMem():
             else:
                 raise NotImplementedError
             self.layerID += 1
+
+        # stop or not
+        if self.layerID == len(self.layerList):
+            self.outputBuffer.setFinalRound()
 
     def write(self, data: np.array) -> None:
         '''

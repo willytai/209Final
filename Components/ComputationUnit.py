@@ -71,7 +71,7 @@ class ComputationUnit():
         '''
       ✓ 1. acccumulate values for corresponding output channels
       ✓ 2. write (add) to output buffer
-        3. check stats
+      ✓ 3. check stats
         '''
         assert self.numInput is not None and self.numOutput is not None and self.outputPos is not None and self.outputChannels is not None
         data = np.zeros(self.numOutput)
@@ -89,7 +89,7 @@ class ComputationUnit():
         self._resetStats()
         raise NotImplementedError
         '''
-        return (self.inputBuffer.isRoundFinished(), None)
+        return self.inputBuffer.isRoundFinished()
 
     def linkInputBuffer(self, input_buffer: InputBuffer) -> None:
         self.inputBuffer = input_buffer

@@ -74,6 +74,19 @@ if __name__ == '__main__':
     img = img / 255
     img = trans.resize(image=img, output_shape=(256, 256, 1)).reshape((1, 256, 256, 1))
 
+    layer = model.get_layer('conv2d_8')
+    test = Model(inputs=layer.input, outputs=layer.output)
+    inn = np.zeros((1,64,64,128))
+    inn[0, :, :, 0] = np.ones((64, 64))
+    check = test.predict(inn)[0]
+    print ('kernel\n')
+    print (layer.get_weights()[0][:,:,0,0])
+    print ('bias\n')
+    print (layer.get_weights()[1][0])
+    print ('resut\n')
+    print (check[-2:, -2:, 0])
+    exit()
+
     conv_count = 1
     pool_count = 1
     up_sample_count = 1

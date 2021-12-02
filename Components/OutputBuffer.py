@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 from skimage.measure import block_reduce
 from . import VMem as VMem
 from . import ComputationUnit as ComputationUnit
@@ -38,20 +39,6 @@ class OutputBuffer():
             - if the computed output is for the final layer, return True
             - otherwise, return False
         '''
-
-        # if self.read_layer1:
-        #     print ('this is temporary, reading precomputed layer3 output')
-        #     v_mem.layerID += 2+2+1
-        #     self.read_layer1 = False
-        #     self.activeBuffer = np.load('layer3_conv_output.npy')
-        #     self.dataReady = True
-        #     v_mem.write(self.activeBuffer)
-        #     self.activeBuffer = None
-        #     self.dataReady = False
-        #     if self.end is None:
-        #         raise NotImplementedError
-        #     return self.end
-
         self.checkData()
         assert self.activeBuffer is not None
         self.postProcess()
@@ -80,7 +67,7 @@ class OutputBuffer():
         '''
         assert self.computationUnit is not None
         self.computationUnit.computeNextRound()
-        self.dataReady, self.end = self.computationUnit.dataWrite(self)
+        self.dataReady = self.computationUnit.dataWrite(self)
 
     def writeData(self, data: float, position: tuple, channels: range) -> None:
         '''
@@ -109,25 +96,33 @@ class OutputBuffer():
     def setConcate(self) -> None:
         self.postProcessInfo['concat'] = True
 
+    def setFinalRound(self) -> None:
+        self.end = True
+
     def postProcess(self) -> None:
         '''
         1. add bias and do activation post-processing
         2. check for other required post-processing (pooling, upsampling, concatenation)
+        3. check stop signal
         '''
         # bias
         self.activeBuffer = self.activeBuffer + self.postProcessInfo['bias']
 
         # activation
-        assert self.postProcessInfo['activation'] == 'relu'
-        self.activeBuffer = np.maximum(0, self.activeBuffer)
+        if self.postProcessInfo['activation'] == 'relu':
+            self.activeBuffer = np.maximum(0, self.activeBuffer)
+        elif self.postProcessInfo['activation'] == 'sigmoid':
+            self.activeBuffer = 1 / (1 + np.exp(-self.activeBuffer))
+        else:
+            raise NotImplementedError
 
-        np.save('layer{}_conv_output.npy'.format(self.conv_out_count), self.activeBuffer)
+        np.save('./intermediate_feature_maps_light_check/layer{}_conv_output.npy'.format(self.conv_out_count), self.activeBuffer)
         self.conv_out_count += 1
 
         # save or not
         if 'save' in self.postProcessInfo:
             assert self.postProcessInfo['save']
-            self.residuals.append(self.activeBuffer)
+            self.residuals.append(np.array(self.activeBuffer))
 
         # pooling with skimage API
         if 'pooling' in self.postProcessInfo:
@@ -137,7 +132,7 @@ class OutputBuffer():
             pool_size = (pool_size[0], pool_size[1], 1)
             self.activeBuffer = block_reduce(self.activeBuffer, block_size=(pool_size), func=np.max)
 
-            np.save('layer{}_maxpool_output.npy'.format(self.pool_out_count), self.activeBuffer)
+            np.save('./intermediate_feature_maps_light_check/layer{}_maxpool_output.npy'.format(self.pool_out_count), self.activeBuffer)
             self.pool_out_count += 1
 
         # upsampling with numpy
@@ -147,19 +142,18 @@ class OutputBuffer():
             kernel_size = self.postProcessInfo['upsample']
             self.activeBuffer = self.activeBuffer.repeat(kernel_size[1], axis=1).repeat(kernel_size[0], axis=0)
 
-            np.save('layer{}_upsample_output.npy'.format(self.upsample_out_count), self.activeBuffer)
+            np.save('./intermediate_feature_maps_light_check/layer{}_upsample_output.npy'.format(self.upsample_out_count), self.activeBuffer)
             self.upsample_out_count += 1
 
         # concat
         if 'concat' in self.postProcessInfo:
             assert self.postProcessInfo['concat']
-            self.activeBuffer = np.concatenate(( self.activeBuffer, self.residuals.pop()), axis=2)
+            self.activeBuffer = np.concatenate((self.residuals.pop(), self.activeBuffer), axis=2)
 
-            np.save('layer{}_concatenate_output.npy'.format(self.concat_out_count), self.activeBuffer)
+            np.save('./intermediate_feature_maps_light_check/layer{}_concatenate_output.npy'.format(self.concat_out_count), self.activeBuffer)
             self.concat_out_count += 1
 
         self.postProcessInfo = dict()
-        # raise NotImplementedError
 
     def linkComputationUnit(self, computation_unit: ComputationUnit) -> None:
         self.computationUnit = computation_unit

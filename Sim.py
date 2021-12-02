@@ -1,4 +1,5 @@
 from uArch import uArch
+from UNet.data import saveResult
 import argparse
 
 '''
@@ -19,7 +20,8 @@ def main(args: argparse.Namespace) -> None:
     arch = uArch()
     arch.loadModel(args.model)
     arch.loadWeight(args.weight)
-    arch.run(args.input)
+    out = arch.run(args.input)
+    saveResult('uArchResult', out)
 
 def parseArgs() -> argparse.Namespace:
     parser = argparse.ArgumentParser()

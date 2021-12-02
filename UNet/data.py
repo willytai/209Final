@@ -3,6 +3,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np 
 import os
 import glob
+import pathlib
 import skimage.io as io
 import skimage.transform as trans
 
@@ -119,6 +120,7 @@ def labelVisualize(num_class,color_dict,img):
 
 
 def saveResult(save_path,npyfile,flag_multi_class = False,num_class = 2):
+    pathlib.Path(save_path).mkdir(parents=True, exist_ok=True)
     for i,item in enumerate(npyfile):
         img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
         io.imsave(os.path.join(save_path,"%d_predict.png"%i),img)

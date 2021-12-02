@@ -17,6 +17,7 @@ class uArch():
         self.outputBuffer = OutputBuffer()
         self.computationUnit = ComputationUnit(pe_array_size=pe_array_size)
         self.inputBuffer = InputBuffer()
+        self.finalOutputShape = None
 
         # link the components
         self.vMem.linkOutputBuffer(self.outputBuffer)
@@ -51,7 +52,7 @@ class uArch():
       ✓ 1. read input image
       ✓ 2. place it in vMem
       ✓ 3. start inference loop
-        4. return the result
+      ✓ 4. return the result
         '''
         image = self._readInput(input_path)
         self.vMem.loadInput(image)
@@ -59,7 +60,8 @@ class uArch():
         while not self.done:
             self.done = self.vMem.requestOutput()
 
-        raise NotImplementedError
+        size = self.finalOutputShape[0]*self.finalOutputShape[1]*self.finalOutputShape[2]
+        return self.vMem.featureMapStorage[:size].reshape((1,)+self.finalOutputShape)
 
     def _loadVMem(self) -> None:
         '''
@@ -122,7 +124,9 @@ class uArch():
     def _computeShape(self) -> None:
         '''
         compute all input/output shapes
+        set the shape of the last (output) layer
         '''
         prevShape = self.vMem.layerList[0].inputShape
         for layer in self.vMem.layerList:
             prevShape = layer.computeShape(self.vMem.layerMap, prevShape)
+        self.finalOutputShape = tuple(prevShape)
