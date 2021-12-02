@@ -33,6 +33,7 @@ def memcpy(dst: np.array, src: np.array, start: int = 0, count: int = -1) -> Non
     '''
     assert len(dst.shape) == 1 and len(src.shape) == 1
     if count == -1: count = src.size
+    assert dst.size >= src.size+start
     dst[start:start+count] = src[:count]
 
 if __name__ == '__main__':

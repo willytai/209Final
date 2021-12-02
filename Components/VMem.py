@@ -16,8 +16,9 @@ from . import InputBuffer as InputBuffer
     - self.layerMap stores the name mapping of each layer
     - self.layerID is the index of the current layer
     - self.featureMapStorage is the storage for feature map, the maximum storage reuqired is
-      input_width * input_height * #_of_filters_in_1st_conv
+      input_width * input_height * #_of_filters_in_1st_conv * 2
     - self.outputBuffer references the output buffer for convenience
+    - self.concatCandidates is a list of layers that need to be saved for concatenation in the future
 '''
 class VMem():
     def __init__(self) -> None:
@@ -26,6 +27,7 @@ class VMem():
         self.layerID = 0
         self.featureMapStorage = None
         self.outputBuffer = None
+        self.concatCandidates = list()
 
     def loadInput(self, image: np.array) -> None:
         '''
@@ -37,7 +39,7 @@ class VMem():
         filters = self.layerList[1].filters          # from the first conv layer (right after the input layer)
         # image_q = quantize8(image, fl=7)
         image_q = image
-        self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters), dtype=np.float32)
+        self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters*2), dtype=np.float32)
         self.write(image_q)
 
     def requestOutput(self) -> bool:
@@ -95,15 +97,24 @@ class VMem():
 
         print ('data sent from vMem, processing {}'.format(targetLayer))
 
-        # queue post-processing actions
+        # post-processing actions
+        # bias & activation
         self.outputBuffer.setBiasActivation(bias=targetLayer.bias, activation=targetLayer.activation)
+        # save intermediate feature map for concatenation
+        if targetLayer.name in self.concatCandidates:
+            self.outputBuffer.setSaveResidual()
+        # pooling or upsampling and concatenation
         self.layerID += 1
         while self.layerID < len(self.layerList) and self.layerList[self.layerID].type != LayerType.CONV:
             targetLayer = self.layerList[self.layerID]
-            if targetLayer.type != LayerType.DOWN_SAMPLE:
-                raise NotImplementedError
+            if targetLayer.type == LayerType.DOWN_SAMPLE:
+                self.outputBuffer.setPooling(targetLayer.kernel_size)
+            elif targetLayer.type == LayerType.UP_SAMPLE:
+                self.outputBuffer.setUpsample(targetLayer.kernel_size)
+            elif targetLayer.type == LayerType.CONCAT:
+                self.outputBuffer.setConcate()
             else:
-                self.outputBuffer.setPool(targetLayer.kernel_size)
+                raise NotImplementedError
             self.layerID += 1
 
     def write(self, data: np.array) -> None:
@@ -142,6 +153,7 @@ class VMem():
         Concatenate 'src' to 'dst'
         'src' precede 'dst' in the third dimension
         '''
+        self.concatCandidates.append(dst)
         newLayer = Layer(LayerType.CONCAT, name)
         newLayer.setConcatParam(src=src, dst=dst)
         self.layerList.append(newLayer)

@@ -15,7 +15,7 @@ from . import ComputationUnit as ComputationUnit
 
 class OutputBuffer():
     def __init__(self) -> None:
-        self.residuals = None
+        self.residuals = list()
         self.activeBuffer = None
         self.computationUnit = None
         self.dataReady = False
@@ -25,6 +25,8 @@ class OutputBuffer():
         self.read_layer1 = True
         self.conv_out_count = 1
         self.pool_out_count = 1
+        self.upsample_out_count = 1
+        self.concat_out_count = 1
 
     def vMemWrite(self, v_mem: VMem) -> bool:
         '''
@@ -95,8 +97,17 @@ class OutputBuffer():
         self.postProcessInfo['bias'] = bias
         self.postProcessInfo['activation'] = activation
 
-    def setPool(self, pool_size: tuple) -> None:
+    def setPooling(self, pool_size: tuple) -> None:
         self.postProcessInfo['pooling'] = pool_size
+
+    def setUpsample(self, kernel_size: tuple) -> None:
+        self.postProcessInfo['upsample'] = kernel_size
+
+    def setSaveResidual(self) -> None:
+        self.postProcessInfo['save'] = True
+
+    def setConcate(self) -> None:
+        self.postProcessInfo['concat'] = True
 
     def postProcess(self) -> None:
         '''
@@ -113,8 +124,14 @@ class OutputBuffer():
         np.save('layer{}_conv_output.npy'.format(self.conv_out_count), self.activeBuffer)
         self.conv_out_count += 1
 
+        # save or not
+        if 'save' in self.postProcessInfo:
+            assert self.postProcessInfo['save']
+            self.residuals.append(self.activeBuffer)
+
         # pooling with skimage API
         if 'pooling' in self.postProcessInfo:
+            assert 'upsample' not in self.postProcessInfo
             print ('pooling')
             pool_size = self.postProcessInfo['pooling']
             pool_size = (pool_size[0], pool_size[1], 1)
@@ -122,6 +139,24 @@ class OutputBuffer():
 
             np.save('layer{}_maxpool_output.npy'.format(self.pool_out_count), self.activeBuffer)
             self.pool_out_count += 1
+
+        # upsampling with numpy
+        if 'upsample' in self.postProcessInfo:
+            assert 'pooling' not in self.postProcessInfo
+            print ('upsampling')
+            kernel_size = self.postProcessInfo['upsample']
+            self.activeBuffer = self.activeBuffer.repeat(kernel_size[1], axis=1).repeat(kernel_size[0], axis=0)
+
+            np.save('layer{}_upsample_output.npy'.format(self.upsample_out_count), self.activeBuffer)
+            self.upsample_out_count += 1
+
+        # concat
+        if 'concat' in self.postProcessInfo:
+            assert self.postProcessInfo['concat']
+            self.activeBuffer = np.concatenate(( self.activeBuffer, self.residuals.pop()), axis=2)
+
+            np.save('layer{}_concatenate_output.npy'.format(self.concat_out_count), self.activeBuffer)
+            self.concat_out_count += 1
 
         self.postProcessInfo = dict()
         # raise NotImplementedError
