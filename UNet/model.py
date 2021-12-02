@@ -66,9 +66,11 @@ if __name__ == '__main__':
     layer1 = model.get_layer('conv2d')
     layer2 = model.get_layer('conv2d_1')
     layer3 = model.get_layer('max_pooling2d')
+    layer4 = model.get_layer('conv2d_2')
     _1_layer_model = Model(inputs = model.input, outputs = layer1.output)
     _2_layer_model = Model(inputs = model.input, outputs = layer2.output)
     _3_layer_model = Model(inputs = model.input, outputs = layer3.output)
+    _4_layer_model = Model(inputs = model.input, outputs = layer4.output)
     # weights = layer1.get_weights()[0]
     # bias = layer1.get_weights()[1]
     # print ('weights', weights[:,:,:,0])
@@ -84,8 +86,10 @@ if __name__ == '__main__':
     _1_out = _1_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
     _2_out = _2_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
     _3_out = _3_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    _4_out = _4_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
     np.save('layer1_conv_output_golden.npy', _1_out)
     np.save('layer2_conv_output_golden.npy', _2_out)
-    np.save('layer3_maxpool_output_golden.npy', _3_out)
+    np.save('layer1_maxpool_output_golden.npy', _3_out)
+    np.save('layer3_conv_output_golden.npy', _4_out)
     # with open('unet_model.json', 'w') as f:
     #     f.write(model.to_json())

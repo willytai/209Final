@@ -76,7 +76,7 @@ class ComputationUnit():
         assert self.numInput is not None and self.numOutput is not None and self.outputPos is not None and self.outputChannels is not None
         data = np.zeros(self.numOutput)
         for i in range(self.numOutput):
-            data[i] = self.PEArray[2,i*self.numInput:(i+1)*self.numInput].sum()
+            data[i] = np.add.reduce(self.PEArray[2,i*self.numInput:(i+1)*self.numInput])
         output_buffer.writeData(data=data,
                                 position=self.outputPos,
                                 channels=self.outputChannels)

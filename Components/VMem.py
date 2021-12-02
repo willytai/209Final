@@ -52,7 +52,6 @@ class VMem():
         return ret
 
     def send(self, input_buffer: InputBuffer) -> None:
-        print ('calling vmem::send')
         print ('layerid', self.layerID)
         '''
       ✓ 1. read next conv to input buffer
@@ -93,6 +92,8 @@ class VMem():
 
         # output buffer initialization (reset)
         self.outputBuffer.resetBuffer(targetLayer.outputShape)
+
+        print ('data sent from vMem, processing {}'.format(targetLayer))
 
         # queue post-processing actions
         self.outputBuffer.setBiasActivation(bias=targetLayer.bias, activation=targetLayer.activation)

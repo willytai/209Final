@@ -35,10 +35,10 @@ class OutputBuffer():
         '''
 
         if self.read_layer1:
-            print ('this is temporary, reading precomputed layer1 output')
-            v_mem.layerID += 2
+            print ('this is temporary, reading precomputed layer3 output')
+            v_mem.layerID += 2+2
             self.read_layer1 = False
-            self.activeBuffer = np.load('layer1_conv_output.npy')
+            self.activeBuffer = np.load('layer1_maxpool_output.npy')
             self.dataReady = True
             v_mem.write(self.activeBuffer)
             self.activeBuffer = None
@@ -84,6 +84,7 @@ class OutputBuffer():
         self.activeBuffer[position[0], position[1], channels] += data
 
     def resetBuffer(self, shape: tuple) -> None:
+        print ('output buffer reset to {}'.format(shape))
         self.activeBuffer = np.zeros(shape)
 
     def setBiasActivation(self, bias: np.array, activation: str) -> None:
@@ -105,7 +106,7 @@ class OutputBuffer():
         assert self.postProcessInfo['activation'] == 'relu'
         self.activeBuffer = np.maximum(0, self.activeBuffer)
 
-        np.save('layer2_conv_output.npy', self.activeBuffer)
+        np.save('layer3_conv_output.npy', self.activeBuffer)
 
         # pooling with skimage API
         if 'pooling' in self.postProcessInfo:
@@ -114,7 +115,7 @@ class OutputBuffer():
             pool_size = (pool_size[0], pool_size[1], 1)
             self.activeBuffer = block_reduce(self.activeBuffer, block_size=(pool_size), func=np.max)
 
-            np.save('layer3_maxpool_output.npy', self.activeBuffer)
+            np.save('layer2_maxpool_output.npy', self.activeBuffer)
 
         self.postProcessInfo = dict()
         raise NotImplementedError
