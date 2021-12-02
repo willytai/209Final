@@ -107,12 +107,10 @@ class InputBuffer():
     def _check(self) -> None:
         '''
       ✓ 1. reload when buffer is empty
-        2. reload when current layer all computed
+      ✓ 2. reload when current layer all computed
         '''
-        if self.fmBuffer is None or self.krnlBuffer is None:
+        if self.fmBuffer is None or self.krnlBuffer is None or not self.krnlPos.hasNext():
             self._read()
-        elif not self.krnlPos.hasNext():
-            raise NotImplementedError
 
     def _read(self) -> None:
         '''

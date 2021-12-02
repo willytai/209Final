@@ -67,10 +67,24 @@ if __name__ == '__main__':
     layer2 = model.get_layer('conv2d_1')
     layer3 = model.get_layer('max_pooling2d')
     layer4 = model.get_layer('conv2d_2')
-    _1_layer_model = Model(inputs = model.input, outputs = layer1.output)
-    _2_layer_model = Model(inputs = model.input, outputs = layer2.output)
-    _3_layer_model = Model(inputs = model.input, outputs = layer3.output)
-    _4_layer_model = Model(inputs = model.input, outputs = layer4.output)
+    layer5 = model.get_layer('conv2d_3')
+    layer6 = model.get_layer('max_pooling2d_1')
+    layer7 = model.get_layer('conv2d_4')
+    layer8 = model.get_layer('conv2d_5')
+    layer9 = model.get_layer('max_pooling2d_2')
+    layer10 = model.get_layer('conv2d_6')
+    # _1_layer_model = Model(inputs = model.input, outputs = layer1.output)
+    # _2_layer_model = Model(inputs = model.input, outputs = layer2.output)
+    # _3_layer_model = Model(inputs = model.input, outputs = layer3.output)
+    # _4_layer_model = Model(inputs = model.input, outputs = layer4.output)
+    # _5_layer_model = Model(inputs = model.input, outputs = layer5.output)
+    # _6_layer_model = Model(inputs = model.input, outputs = layer6.output)
+
+    _7_layer_model = Model(inputs = model.input, outputs = layer7.output)
+    _8_layer_model = Model(inputs = model.input, outputs = layer8.output)
+    _9_layer_model = Model(inputs = model.input, outputs = layer9.output)
+    # _10_layer_model = Model(inputs = model.input, outputs = layer10.output)
+
     # weights = layer1.get_weights()[0]
     # bias = layer1.get_weights()[1]
     # print ('weights', weights[:,:,:,0])
@@ -83,13 +97,29 @@ if __name__ == '__main__':
     img = img / 255
     img = trans.resize(image=img, output_shape=(256, 256, 1))
     # _1_out = _1_layer_model.predict(np.ones((1, 256, 256, 1)))[0]
-    _1_out = _1_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
-    _2_out = _2_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
-    _3_out = _3_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
-    _4_out = _4_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
-    np.save('layer1_conv_output_golden.npy', _1_out)
-    np.save('layer2_conv_output_golden.npy', _2_out)
-    np.save('layer1_maxpool_output_golden.npy', _3_out)
-    np.save('layer3_conv_output_golden.npy', _4_out)
+    # _1_out = _1_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    # _2_out = _2_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    # _3_out = _3_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    # _4_out = _4_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    # _5_out = _5_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    # _6_out = _6_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+
+    _7_out = _7_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    _8_out = _8_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    _9_out = _9_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+    # _10_out = _10_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]
+
+    # np.save('layer1_conv_output_golden.npy', _1_out)
+    # np.save('layer2_conv_output_golden.npy', _2_out)
+    # np.save('layer1_maxpool_output_golden.npy', _3_out)
+    # np.save('layer3_conv_output_golden.npy', _4_out)
+    # np.save('layer4_conv_output_golden.npy', _5_out)
+    # np.save('layer2_maxpool_output_golden.npy', _6_out)
+
+    np.save('layer5_conv_output_golden.npy', _7_out)
+    np.save('layer6_conv_output_golden.npy', _8_out)
+    np.save('layer3_maxpool_output_golden.npy', _9_out)
+    # np.save('layer7_conv_output_golden.npy', _10_out)
+
     # with open('unet_model.json', 'w') as f:
     #     f.write(model.to_json())

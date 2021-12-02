@@ -12,6 +12,7 @@ from . import ComputationUnit as ComputationUnit
 - self.end indicates whether the loop has ended (last layer or not)
 '''
 
+
 class OutputBuffer():
     def __init__(self) -> None:
         self.residuals = None
@@ -22,6 +23,8 @@ class OutputBuffer():
         self.postProcessInfo = dict()
 
         self.read_layer1 = True
+        self.conv_out_count = 1
+        self.pool_out_count = 1
 
     def vMemWrite(self, v_mem: VMem) -> bool:
         '''
@@ -34,26 +37,27 @@ class OutputBuffer():
             - otherwise, return False
         '''
 
-        if self.read_layer1:
-            print ('this is temporary, reading precomputed layer3 output')
-            v_mem.layerID += 2+2
-            self.read_layer1 = False
-            self.activeBuffer = np.load('layer1_maxpool_output.npy')
-            self.dataReady = True
-            v_mem.write(self.activeBuffer)
-            self.activeBuffer = None
-            self.dataReady = False
-            if self.end is None:
-                raise NotImplementedError
-            return self.end
+        # if self.read_layer1:
+        #     print ('this is temporary, reading precomputed layer3 output')
+        #     v_mem.layerID += 2+2+1
+        #     self.read_layer1 = False
+        #     self.activeBuffer = np.load('layer3_conv_output.npy')
+        #     self.dataReady = True
+        #     v_mem.write(self.activeBuffer)
+        #     self.activeBuffer = None
+        #     self.dataReady = False
+        #     if self.end is None:
+        #         raise NotImplementedError
+        #     return self.end
 
         self.checkData()
         assert self.activeBuffer is not None
         self.postProcess()
         v_mem.write(self.activeBuffer)
         self.activeBuffer = None
-        if self.end is None:
-            raise NotImplementedError
+        self.dataReady = False
+        # if self.end is None:
+        #     raise NotImplementedError
         return self.end
 
     def checkData(self) -> None:
@@ -106,7 +110,8 @@ class OutputBuffer():
         assert self.postProcessInfo['activation'] == 'relu'
         self.activeBuffer = np.maximum(0, self.activeBuffer)
 
-        np.save('layer3_conv_output.npy', self.activeBuffer)
+        np.save('layer{}_conv_output.npy'.format(self.conv_out_count), self.activeBuffer)
+        self.conv_out_count += 1
 
         # pooling with skimage API
         if 'pooling' in self.postProcessInfo:
@@ -115,10 +120,11 @@ class OutputBuffer():
             pool_size = (pool_size[0], pool_size[1], 1)
             self.activeBuffer = block_reduce(self.activeBuffer, block_size=(pool_size), func=np.max)
 
-            np.save('layer2_maxpool_output.npy', self.activeBuffer)
+            np.save('layer{}_maxpool_output.npy'.format(self.pool_out_count), self.activeBuffer)
+            self.pool_out_count += 1
 
         self.postProcessInfo = dict()
-        raise NotImplementedError
+        # raise NotImplementedError
 
     def linkComputationUnit(self, computation_unit: ComputationUnit) -> None:
         self.computationUnit = computation_unit
