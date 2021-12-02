@@ -109,6 +109,7 @@ class OutputBuffer():
 
         # pooling with skimage API
         if 'pooling' in self.postProcessInfo:
+            print ('pooling')
             pool_size = self.postProcessInfo['pooling']
             pool_size = (pool_size[0], pool_size[1], 1)
             self.activeBuffer = block_reduce(self.activeBuffer, block_size=(pool_size), func=np.max)

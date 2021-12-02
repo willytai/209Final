@@ -129,8 +129,8 @@ class InputBuffer():
         '''
         kernelIDs, globalPos, kernelPos = self.krnlPos.next(max_multiplications//self.fmBuffer.shape[2])
 
-        kernelWeights = self.krnlBuffer[kernelPos[0]:kernelPos[0]+1, kernelPos[1]:kernelPos[1]+1, :, kernelIDs]
-        features = self.fmBuffer[globalPos[0]+kernelPos[0]:globalPos[0]+kernelPos[0]+1, globalPos[1]+kernelPos[1]:globalPos[1]+kernelPos[1]+1, :]
+        kernelWeights = self.krnlBuffer[kernelPos[0], kernelPos[1], :, kernelIDs]
+        features = self.fmBuffer[globalPos[0]+kernelPos[0], globalPos[1]+kernelPos[1], :]
 
         return (kernelWeights, features, globalPos, kernelIDs)
 

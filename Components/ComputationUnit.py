@@ -32,11 +32,9 @@ class ComputationUnit():
         assert self.inputBuffer is not None
         kernelWeights, features, outputPos, outputChannels = self.dataFetch()
         # some sanity checks
-        assert kernelWeights.shape[0] == 1 and kernelWeights.shape[0] == 1 and kernelWeights.shape[2] == features.shape[2] and features.shape[0] == 1 and features.shape[1] == 1
+        assert kernelWeights.shape[1] == features.shape[0]
 
         # (kernelid, weights)
-        kernelWeights = np.transpose(kernelWeights.reshape((kernelWeights.shape[2], kernelWeights.shape[3])))
-        features = features.reshape((features.shape[2],))
         numInput = kernelWeights.shape[1]
         numOutput = kernelWeights.shape[0]
 
@@ -79,7 +77,6 @@ class ComputationUnit():
         data = np.zeros(self.numOutput)
         for i in range(self.numOutput):
             data[i] = self.PEArray[2,i*self.numInput:(i+1)*self.numInput].sum()
-            # data = self.PEArray[2,i*self.numInput]
         output_buffer.writeData(data=data,
                                 position=self.outputPos,
                                 channels=self.outputChannels)
