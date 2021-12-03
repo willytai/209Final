@@ -28,14 +28,15 @@ class KernelPostion():
         self.curIteration = 0
 
         self.done = False
+        self.statusLineLength = 70
 
     def next(self, max_kernel_usage: int) -> tuple:
         '''
-        1. check self.startId+max_kernel_usage, if >= self.kernelNum, reset and incrase self.position
-        2. if incrase self.position, check if valid within self.outputShape, if not, reset and increase curIteration
-        3. if increase self.curIteration, check if last iteration
-        4. if last iteration, DO SOMETHING
-        5. return the
+      ✓ 1. check self.startId+max_kernel_usage, if >= self.kernelNum, reset and incrase self.position
+      ✓ 2. if incrase self.position, check if valid within self.outputShape, if not, reset and increase curIteration
+      ✓ 3. if increase self.curIteration, check if last iteration
+      ✓ 4. if last iteration, DO SOMETHING
+      ✓ 5. return the
             - kernelIDs to use
             - the global position of the kernel
             - the curIteration trasformed into coordinate in kernel space
@@ -54,9 +55,12 @@ class KernelPostion():
                     self.position[0] = 0
                     if self.curIteration >= self.kernelSize[0]*self.kernelSize[1]-1:
                         self.done = True
+                        print ('\r['+'='*(self.statusLineLength-1)+'>] 100.00%', flush=True)
                     else:
                         self.curIteration += 1
-                        print ('incr iteration: {}'.format(self.curIteration))
+                        portion = self.curIteration/self.kernelSize[0]/self.kernelSize[1]
+                        status = int(self.statusLineLength * portion)
+                        print ('\r['+'='*(status-1)+'>'+' '*(self.statusLineLength-status)+'] {:.2f}%'.format(portion*100), end='', flush=True)
                 else:
                     self.position[0] += 1
             else:
@@ -66,6 +70,9 @@ class KernelPostion():
 
     def hasNext(self):
         return not self.done
+
+    def resetStatusLine(self):
+        print ('\r[=>'+' '*(self.statusLineLength-2)+'] {:.2f}%'.format(0.0), end='', flush=True)
 
     def __str__(self):
         return 'kernel pos {}/{}, iteration {}/{}, kernelID {}/{}'.format(tuple(self.position),

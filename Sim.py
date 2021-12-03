@@ -17,7 +17,7 @@ TODO:
 '''
 
 def main(args: argparse.Namespace) -> None:
-    arch = uArch()
+    arch = uArch(pe_array_size=32, verbose=0)
     arch.loadModel(args.model)
     arch.loadWeight(args.weight)
     out = arch.run(args.input)

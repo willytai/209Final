@@ -12,8 +12,8 @@ import skimage.transform as trans
     Loading model and weights with the keras API fow now
 '''
 class uArch():
-    def __init__(self, pe_array_size: int = 32) -> None:
-        self.vMem = VMem()
+    def __init__(self, pe_array_size: int = 32, verbose: int = 0) -> None:
+        self.vMem = VMem(verbose)
         self.outputBuffer = OutputBuffer()
         self.computationUnit = ComputationUnit(pe_array_size=pe_array_size)
         self.inputBuffer = InputBuffer()

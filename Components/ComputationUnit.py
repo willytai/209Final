@@ -31,6 +31,7 @@ class ComputationUnit():
         '''
         assert self.inputBuffer is not None
         kernelWeights, features, outputPos, outputChannels = self.dataFetch()
+
         # some sanity checks
         assert kernelWeights.shape[1] == features.shape[0]
 
@@ -51,19 +52,6 @@ class ComputationUnit():
         self.outputPos = outputPos
         self.outputChannels = outputChannels
 
-        '''
-        print (self.PEArray[1,:numInput*numOutput])
-        print (self.PEArray[0,:numInput*numOutput])
-        print (self.PEArray[2,:numInput*numOutput])
-        print (kernelWeights)
-        print (kernelWeights.shape)
-        print (features.shape)
-        print ('numInput/numOutput', numInput, numOutput)
-        print ('outputPos', outputPos)
-        print ('outputChannels',outputChannels)
-        raise NotImplementedError
-        '''
-
     def dataFetch(self) -> tuple:
         return self.inputBuffer.sendData(self.PEArrayLength*PE_COMPUTATIONAL_CAPABILITY)
 
@@ -80,15 +68,7 @@ class ComputationUnit():
         output_buffer.writeData(data=data,
                                 position=self.outputPos,
                                 channels=self.outputChannels)
-        '''
-        print (output_buffer.activeBuffer.shape)
-        print (self.numInput)
-        print (self.numOutput)
-        print (self.outputPos)
-        print (self.outputChannels)
-        self._resetStats()
-        raise NotImplementedError
-        '''
+
         return self.inputBuffer.isRoundFinished()
 
     def linkInputBuffer(self, input_buffer: InputBuffer) -> None:

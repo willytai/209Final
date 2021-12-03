@@ -21,18 +21,19 @@ from . import InputBuffer as InputBuffer
     - self.concatCandidates is a list of layers that need to be saved for concatenation in the future
 '''
 class VMem():
-    def __init__(self) -> None:
+    def __init__(self, verbose: int = 0) -> None:
         self.layerList = list()
         self.layerMap = dict()
         self.layerID = 0
         self.featureMapStorage = None
         self.outputBuffer = None
         self.concatCandidates = list()
+        self.verbose = verbose
 
     def loadInput(self, image: np.array) -> None:
         '''
       ✓ 1. initialize self.featureMapStorage
-      ✓ 2. quantize image to 8 bit
+        2. quantize image to 8 bit
       ✓ 3. load to self.featureMapStorage
         '''
         inputDim = self.layerList[0].getInputShape() # from the first layer (input layer)
@@ -43,18 +44,15 @@ class VMem():
         self.write(image_q)
 
     def requestOutput(self) -> bool:
-        print ('requesting output')
         '''
       ✓ 1. request output of the next layer from the output buffer
       ✓ 2. return the state
         '''
         assert self.outputBuffer is not None
         ret = self.outputBuffer.vMemWrite(self)
-        # raise NotImplementedError
         return ret
 
     def send(self, input_buffer: InputBuffer) -> None:
-        print ('layerid', self.layerID)
         '''
       ✓ 1. read next conv to input buffer
             - do the padding here
@@ -62,13 +60,17 @@ class VMem():
       ✓ 3. read next strides and set kernel pos to input buffer
             - reset input_buffer.krnlPos
       ✓ 4. send instruction to the output buffer for buffer initialization
-        5. perpare output buffer for post-processing
+      ✓ 5. perpare output buffer for post-processing
         '''
         # skip input layer
         if self.layerList[self.layerID].type == LayerType.INPUT:
+            print ('[{}/{}] processing layer: {}'.format(self.layerID+1, len(self.layerList), self.layerList[self.layerID]))
             self.layerID += 1
         assert self.layerList[self.layerID].type == LayerType.CONV
+
         targetLayer = self.layerList[self.layerID]
+        print ('[{}/{}] processing layer: {}'.format(self.layerID+1, len(self.layerList), targetLayer))
+
         inputShape = targetLayer.getInputShape()
         inputSize = inputShape[0]*inputShape[1]*inputShape[2]
 
@@ -95,8 +97,6 @@ class VMem():
         # output buffer initialization (reset)
         self.outputBuffer.resetBuffer(targetLayer.outputShape)
 
-        print ('data sent from vMem, processing {}'.format(targetLayer))
-
         # post-processing actions
         # bias & activation
         self.outputBuffer.setBiasActivation(bias=targetLayer.bias, activation=targetLayer.activation)
@@ -109,6 +109,7 @@ class VMem():
         self.layerID += 1
         while self.layerID < len(self.layerList) and self.layerList[self.layerID].type != LayerType.CONV:
             targetLayer = self.layerList[self.layerID]
+            print ('[{}/{}] processing layer: {}'.format(self.layerID+1, len(self.layerList), targetLayer))
             if targetLayer.type == LayerType.DOWN_SAMPLE:
                 self.outputBuffer.setPooling(targetLayer.kernel_size)
             elif targetLayer.type == LayerType.UP_SAMPLE:
@@ -116,12 +117,14 @@ class VMem():
             elif targetLayer.type == LayerType.CONCAT:
                 self.outputBuffer.setConcate()
             else:
-                raise NotImplementedError
+                raise NotImplementedError('unsupported layer type: {}'.format(targetLayer.type))
             self.layerID += 1
 
         # stop or not
         if self.layerID == len(self.layerList):
             self.outputBuffer.setFinalRound()
+
+        input_buffer.krnlPos.resetStatusLine()
 
     def write(self, data: np.array) -> None:
         '''
@@ -184,7 +187,8 @@ class VMem():
         return self.layerList[0].getInputShape()
 
     def layerStat(self):
-        for layer in self.layerList: print (layer)
+        if self.verbose != 0:
+            for layer in self.layerList: print (layer)
 
     def _paramTypeTransfrom(self, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> tuple:
         if type(strides) == tuple:
