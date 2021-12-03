@@ -8,8 +8,7 @@ import skimage.io as io
 import skimage.transform as trans
 
 '''
-    Contains ...
-    Loading model and weights with the keras API fow now
+Loading model and weights with the keras API fow now
 '''
 class uArch():
     def __init__(self, pe_array_size: int = 32, verbose: int = 0) -> None:
@@ -30,6 +29,9 @@ class uArch():
 
         # just for convenience
         self.model = None
+
+    def showUsage(self) -> None:
+        self.computationUnit.usage()
 
     def loadModel(self, model_path: str) -> None:
         '''

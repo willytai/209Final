@@ -2,25 +2,24 @@ import numpy as np
 from . import OutputBuffer as OutputBuffer
 from . import InputBuffer as InputBuffer
 
-'''
-    A PE is capable of doing 32 multiplications by default
-'''
 PE_COMPUTATIONAL_CAPABILITY = 32
-class PE():
-    def __init__(self):
-        pass
 
-'''
-    1. Contains the PE array
-    2. Channel based parallelism
-    - self.inputBuffer references the InputBuffer for convenience
-'''
 class ComputationUnit():
     def __init__(self, pe_array_size: int) -> None:
+        '''
+        self.PEArray[0,:]: tiled feature map
+        self.PEArray[1,:]: kernel weights
+        self.PEArray[2,:]: output register
+        '''
         self.PEArray = np.zeros((3, pe_array_size*PE_COMPUTATIONAL_CAPABILITY))
         self.PEArrayLength = pe_array_size
         self.inputBuffer = None
-        self._resetStats()
+        self.numInput = None
+        self.numOutput = None
+        self.outputPos = None
+        self.outputChannels = None
+        self.cycles = 0
+        self.multiplicationCount = 0
 
     def computeNextRound(self) -> None:
         '''
@@ -28,6 +27,8 @@ class ComputationUnit():
       ✓ 2. assign task to PE
       ✓ 3. compute
       ✓ 4. record self.numInput and self.numOutput
+      ✓ 5. increment cycle
+      ✓ 6. acccumulate number of multiplications
         '''
         assert self.inputBuffer is not None
         kernelWeights, features, outputPos, outputChannels = self.dataFetch()
@@ -51,6 +52,8 @@ class ComputationUnit():
         self.numOutput = numOutput
         self.outputPos = outputPos
         self.outputChannels = outputChannels
+        self.cycles += 1
+        self.multiplicationCount += numInput*numOutput
 
     def dataFetch(self) -> tuple:
         return self.inputBuffer.sendData(self.PEArrayLength*PE_COMPUTATIONAL_CAPABILITY)
@@ -71,12 +74,12 @@ class ComputationUnit():
 
         return self.inputBuffer.isRoundFinished()
 
+    def usage(self) -> None:
+        print ('------ Resource Usage ------')
+        print ('- # PE: {}'.format(self.PEArrayLength))
+        print ('- Cycles: {}'.format(self.cycles))
+        print ('- PE Utilization: {:.2f}%'.format(self.multiplicationCount/(self.cycles*self.PEArrayLength*PE_COMPUTATIONAL_CAPABILITY)*100))
+        print ('----------------------------')
+
     def linkInputBuffer(self, input_buffer: InputBuffer) -> None:
         self.inputBuffer = input_buffer
-
-    def _resetStats(self):
-        self.numInput = None
-        self.numOutput = None
-        self.outputPos = None
-        self.outputChannels = None
-

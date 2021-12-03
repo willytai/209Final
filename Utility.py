@@ -52,4 +52,5 @@ if __name__ == '__main__':
         memcpy(dst, src, start=1, count=5)
         print ('after', dst)
 
-    test_memcpy()
+    # test_memcpy()
+    # test_quantize8()

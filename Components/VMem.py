@@ -33,13 +33,12 @@ class VMem():
     def loadInput(self, image: np.array) -> None:
         '''
       ✓ 1. initialize self.featureMapStorage
-        2. quantize image to 8 bit
+      ✓ 2. quantize image to 8 bit
       ✓ 3. load to self.featureMapStorage
         '''
         inputDim = self.layerList[0].getInputShape() # from the first layer (input layer)
         filters = self.layerList[1].filters          # from the first conv layer (right after the input layer)
-        # image_q = quantize8(image, fl=7)
-        image_q = image
+        image_q = quantize8(image, fl=7)
         self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters*2), dtype=np.float32)
         self.write(image_q)
 
