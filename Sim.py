@@ -21,7 +21,7 @@ def main(args: argparse.Namespace) -> None:
     arch.loadModel(args.model)
     arch.loadWeight(args.weight)
     out = arch.run(args.input)
-    saveResult('uArchResult', out)
+    saveResult('uArchResult', args.input, out)
 
 def parseArgs() -> argparse.Namespace:
     parser = argparse.ArgumentParser()

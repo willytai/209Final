@@ -119,8 +119,10 @@ def labelVisualize(num_class,color_dict,img):
 
 
 
-def saveResult(save_path,npyfile,flag_multi_class = False,num_class = 2):
+def saveResult(save_path,save_name,npyfile,flag_multi_class = False,num_class = 2):
     pathlib.Path(save_path).mkdir(parents=True, exist_ok=True)
+    save_name = save_name.split('/')[-1]
+    save_name = save_name.split('.')[0]
     for i,item in enumerate(npyfile):
         img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
-        io.imsave(os.path.join(save_path,"%d_predict.png"%i),img)
+        io.imsave(os.path.join(save_path,"{}_predict.png".format(save_name)),img)
