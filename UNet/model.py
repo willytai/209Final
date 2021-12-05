@@ -62,6 +62,7 @@ def unet(pretrained_weights = None,input_size = (256,256,1)):
 
 if __name__ == '__main__':
     model = unet()
+    exit()
     model.load_weights("unet_model.hdf5")
     layer1 = model.get_layer('conv2d')
     layer2 = model.get_layer('conv2d_1')

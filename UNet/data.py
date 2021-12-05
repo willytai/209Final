@@ -127,7 +127,9 @@ def saveResult(npyfile,save_path,save_name=None,flag_multi_class = False,num_cla
         for i,item in enumerate(npyfile):
             img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
             io.imsave(os.path.join(save_path,"{}_predict.png".format(save_name)),img)
+            print ('Result saved to: {}'.format(os.path.join(save_path,"{}_predict.png".format(save_name))))
     else:
         for i,item in enumerate(npyfile):
             img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
             io.imsave(os.path.join(save_path,"{}_predict.png".format(i)),img)
+            print ('Result saved to: {}'.format(os.path.join(save_path,"{}_predict.png".format(i))))

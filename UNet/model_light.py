@@ -65,6 +65,7 @@ def unet(pretrained_weights = None,input_size = (256,256,1)):
 
 if __name__ == '__main__':
     model = unet()
+    exit()
     model.load_weights("unet_model_light.hdf5")
 
     import skimage.io as io

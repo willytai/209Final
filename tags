@@ -37,7 +37,6 @@ OutputBuffer	Components/ComputationUnit.py	/^from . import OutputBuffer as Outpu
 OutputBuffer	Components/OutputBuffer.py	/^class OutputBuffer():$/;"	c
 OutputBuffer	Components/VMem.py	/^from . import OutputBuffer as OutputBuffer$/;"	i
 OutputBuffer	uArch.py	/^from Components.OutputBuffer import OutputBuffer$/;"	i
-PE	Components/ComputationUnit.py	/^class PE():$/;"	c
 PE_COMPUTATIONAL_CAPABILITY	Components/ComputationUnit.py	/^PE_COMPUTATIONAL_CAPABILITY = 32$/;"	v
 PadType	Components/VMem.py	/^from Layer import Layer, LayerType, PadType$/;"	i
 PadType	Layer.py	/^class PadType(enum.Enum):$/;"	c
@@ -63,14 +62,13 @@ _8_layer_model	UNet/model.py	/^    _8_layer_model = Model(inputs = model.input, 
 _8_out	UNet/model.py	/^    _8_out = _8_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]$/;"	v
 _9_layer_model	UNet/model.py	/^    _9_layer_model = Model(inputs = model.input, outputs = layer9.output)$/;"	v
 _9_out	UNet/model.py	/^    _9_out = _9_layer_model.predict(img.reshape((1, 256, 256, 1)))[0]$/;"	v
-__init__	Components/ComputationUnit.py	/^    def __init__(self):$/;"	m	class:PE
 __init__	Components/ComputationUnit.py	/^    def __init__(self, pe_array_size: int) -> None:$/;"	m	class:ComputationUnit
 __init__	Components/InputBuffer.py	/^    def __init__(self):$/;"	m	class:InputBuffer
 __init__	Components/InputBuffer.py	/^    def __init__(self, strides: int, kernel_num: int, kernel_size: tuple, output_shape: tuple):$/;"	m	class:KernelPostion
 __init__	Components/OutputBuffer.py	/^    def __init__(self) -> None:$/;"	m	class:OutputBuffer
-__init__	Components/VMem.py	/^    def __init__(self) -> None:$/;"	m	class:VMem
+__init__	Components/VMem.py	/^    def __init__(self, verbose: int = 0) -> None:$/;"	m	class:VMem
 __init__	Layer.py	/^    def __init__(self, layer_type: LayerType, name: str) -> None:$/;"	m	class:Layer
-__init__	uArch.py	/^    def __init__(self, pe_array_size: int = 32) -> None:$/;"	m	class:uArch
+__init__	uArch.py	/^    def __init__(self, pe_array_size: int = 32, verbose: int = 0) -> None:$/;"	m	class:uArch
 __str__	Components/InputBuffer.py	/^    def __str__(self):$/;"	m	class:KernelPostion	file:
 __str__	Layer.py	/^    def __str__(self) -> str:$/;"	m	class:Layer	file:
 _check	Components/InputBuffer.py	/^    def _check(self) -> None:$/;"	m	class:InputBuffer
@@ -84,7 +82,6 @@ _nextRound	Components/InputBuffer.py	/^    def _nextRound(self, max_multiplicati
 _paramTypeTransfrom	Components/VMem.py	/^    def _paramTypeTransfrom(self, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> tuple:$/;"	m	class:VMem
 _read	Components/InputBuffer.py	/^    def _read(self) -> None:$/;"	m	class:InputBuffer
 _readInput	uArch.py	/^    def _readInput(self, input_path: str) -> np.array:$/;"	m	class:uArch
-_resetStats	Components/ComputationUnit.py	/^    def _resetStats(self):$/;"	m	class:ComputationUnit
 addConcatLayer	Components/VMem.py	/^    def addConcatLayer(self, name: str, src: str, dst: str) -> None:$/;"	m	class:VMem
 addConvLayer	Components/VMem.py	/^    def addConvLayer(self, name: str, filters: int, activation: str, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:$/;"	m	class:VMem
 addDropoutLayer	Components/VMem.py	/^    def addDropoutLayer(self, name: str, rate: float) -> None:$/;"	m	class:VMem
@@ -94,7 +91,8 @@ addUpSamplingLayer	Components/VMem.py	/^    def addUpSamplingLayer(self, name: s
 adjustData	UNet/data.py	/^def adjustData(img,mask,flag_multi_class,num_class):$/;"	f
 argparse	Sim.py	/^import argparse$/;"	i
 block_reduce	Components/OutputBuffer.py	/^from skimage.measure import block_reduce$/;"	i
-check	intermediateResultCheck.py	/^    check = np.load(b)$/;"	v
+check	UNet/model_light.py	/^    check = test.predict(inn)[0]$/;"	v
+check	intermediateResultCheck.py	/^        check = np.load(b)$/;"	v
 checkData	Components/OutputBuffer.py	/^    def checkData(self) -> None:$/;"	m	class:OutputBuffer
 computeNextRound	Components/ComputationUnit.py	/^    def computeNextRound(self) -> None:$/;"	m	class:ComputationUnit
 computeShape	Layer.py	/^    def computeShape(self, layer_map: dict, input_shape: tuple) -> tuple:$/;"	m	class:Layer
@@ -102,7 +100,7 @@ concat_count	UNet/model_light.py	/^    concat_count = 1$/;"	v
 conv_count	UNet/model_light.py	/^    conv_count = 1$/;"	v
 dataFetch	Components/ComputationUnit.py	/^    def dataFetch(self) -> tuple:$/;"	m	class:ComputationUnit
 dataWrite	Components/ComputationUnit.py	/^    def dataWrite(self, output_buffer: OutputBuffer) -> tuple:$/;"	m	class:ComputationUnit
-diff	intermediateResultCheck.py	/^    diff = np.abs(check-ref)$/;"	v
+diff	intermediateResultCheck.py	/^        diff = np.abs(check-ref)$/;"	v
 enum	Layer.py	/^import enum$/;"	i
 geneTrainNpy	UNet/data.py	/^def geneTrainNpy(image_path,mask_path,flag_multi_class = False,num_class = 2,image_prefix = "image",mask_prefix = "mask",image_as_gray = True,mask_as_gray = True):$/;"	f
 getInputShape	Layer.py	/^    def getInputShape(self) -> tuple:$/;"	m	class:Layer
@@ -116,6 +114,7 @@ img	UNet/model.py	/^    img = trans.resize(image=img, output_shape=(256, 256, 1)
 img	UNet/model_light.py	/^    img = img \/ 255$/;"	v
 img	UNet/model_light.py	/^    img = io.imread('.\/testData\/0.png', as_gray=True)$/;"	v
 img	UNet/model_light.py	/^    img = trans.resize(image=img, output_shape=(256, 256, 1)).reshape((1, 256, 256, 1))$/;"	v
+inn	UNet/model_light.py	/^    inn = np.zeros((1,64,64,128))$/;"	v
 io	UNet/data.py	/^import skimage.io as io$/;"	i
 io	UNet/model.py	/^    import skimage.io as io$/;"	i
 io	UNet/model_light.py	/^    import skimage.io as io$/;"	i
@@ -123,6 +122,7 @@ io	Utility.py	/^        import skimage.io as io$/;"	i
 io	uArch.py	/^import skimage.io as io$/;"	i
 isRoundFinished	Components/InputBuffer.py	/^    def isRoundFinished(self) -> bool:$/;"	m	class:InputBuffer
 labelVisualize	UNet/data.py	/^def labelVisualize(num_class,color_dict,img):$/;"	f
+layer	UNet/model_light.py	/^    layer = model.get_layer('conv2d_8')$/;"	v
 layer1	UNet/model.py	/^    layer1 = model.get_layer('conv2d')$/;"	v
 layer10	UNet/model.py	/^    layer10 = model.get_layer('conv2d_6')$/;"	v
 layer2	UNet/model.py	/^    layer2 = model.get_layer('conv2d_1')$/;"	v
@@ -161,19 +161,22 @@ np	intermediateResultCheck.py	/^import numpy as np$/;"	i
 np	uArch.py	/^import numpy as np$/;"	i
 os	UNet/data.py	/^import os$/;"	i
 parseArgs	Sim.py	/^def parseArgs() -> argparse.Namespace:$/;"	f
+pathlib	UNet/data.py	/^import pathlib$/;"	i
 pool_count	UNet/model_light.py	/^    pool_count = 1$/;"	v
 postProcess	Components/OutputBuffer.py	/^    def postProcess(self) -> None:$/;"	m	class:OutputBuffer
 print_function	UNet/data.py	/^from __future__ import print_function$/;"	i
 quantize8	Utility.py	/^def quantize8(value: np.array, fl: int) -> np.array:$/;"	f
-ref	intermediateResultCheck.py	/^    ref = np.load(a)$/;"	v
+ref	intermediateResultCheck.py	/^        ref = np.load(a)$/;"	v
 requestData	Components/OutputBuffer.py	/^    def requestData(self) -> None:$/;"	m	class:OutputBuffer
 requestOutput	Components/VMem.py	/^    def requestOutput(self) -> bool:$/;"	m	class:VMem
 resetBuffer	Components/OutputBuffer.py	/^    def resetBuffer(self, shape: tuple) -> None:$/;"	m	class:OutputBuffer
 resetKernelPosition	Components/InputBuffer.py	/^    def resetKernelPosition(self, strides: int, kernel_num: int, kernel_size: tuple, output_shape: tuple) -> None:$/;"	m	class:InputBuffer
+resetStatusLine	Components/InputBuffer.py	/^    def resetStatusLine(self):$/;"	m	class:KernelPostion
 results	UNet/test.py	/^results = model.predict_generator(testGene,30,verbose=1)$/;"	v
 ret	UNet/model_light.py	/^            ret = test.predict(img)[0]$/;"	v
 run	uArch.py	/^    def run(self, input_path: str) -> np.array:$/;"	m	class:uArch
-saveResult	UNet/data.py	/^def saveResult(save_path,npyfile,flag_multi_class = False,num_class = 2):$/;"	f
+saveResult	Sim.py	/^from UNet.data import saveResult$/;"	i
+saveResult	UNet/data.py	/^def saveResult(npyfile,save_path,save_name=None,flag_multi_class = False,num_class = 2):$/;"	f
 send	Components/VMem.py	/^    def send(self, input_buffer: InputBuffer) -> None:$/;"	m	class:VMem
 sendData	Components/InputBuffer.py	/^    def sendData(self, max_multiplications: int) -> tuple:$/;"	m	class:InputBuffer
 setBiasActivation	Components/OutputBuffer.py	/^    def setBiasActivation(self, bias: np.array, activation: str) -> None:$/;"	m	class:OutputBuffer
@@ -181,6 +184,7 @@ setConcatParam	Layer.py	/^    def setConcatParam(self, src: str, dst: str) -> No
 setConcate	Components/OutputBuffer.py	/^    def setConcate(self) -> None:$/;"	m	class:OutputBuffer
 setConvParam	Layer.py	/^    def setConvParam(self, filters: int, activation: str, kernel_size: tuple, strides: int, pad: PadType) -> None:$/;"	m	class:Layer
 setDropoutParam	Layer.py	/^    def setDropoutParam(self, rate: float) -> None:$/;"	m	class:Layer
+setFinalRound	Components/OutputBuffer.py	/^    def setFinalRound(self) -> None:$/;"	m	class:OutputBuffer
 setInputParam	Layer.py	/^    def setInputParam(self, input_shape: tuple) -> None:$/;"	m	class:Layer
 setMaxPoolingParam	Layer.py	/^    def setMaxPoolingParam(self, kernel_size: tuple, strides: int, pad: PadType) -> None:$/;"	m	class:Layer
 setPooling	Components/OutputBuffer.py	/^    def setPooling(self, pool_size: tuple) -> None:$/;"	m	class:OutputBuffer
@@ -189,6 +193,7 @@ setUpSamplingParam	Layer.py	/^    def setUpSamplingParam(self, kernel_size: tupl
 setUpsample	Components/OutputBuffer.py	/^    def setUpsample(self, kernel_size: tuple) -> None:$/;"	m	class:OutputBuffer
 setWeigtsBias	Components/VMem.py	/^    def setWeigtsBias(self, layer_name: str, weights: np.array, bias: np.array) -> None:$/;"	m	class:VMem
 setWeigtsBias	Layer.py	/^    def setWeigtsBias(self, weights: np.array, bias: np.array) -> None:$/;"	m	class:Layer
+showUsage	uArch.py	/^    def showUsage(self) -> None:$/;"	m	class:uArch
 skimage	UNet/data.py	/^import skimage.io as io$/;"	i
 skimage	UNet/data.py	/^import skimage.transform as trans$/;"	i
 skimage	UNet/model.py	/^    import skimage.io as io$/;"	i
@@ -199,7 +204,9 @@ skimage	Utility.py	/^        import skimage.io as io$/;"	i
 skimage	Utility.py	/^        import skimage.transform as trans$/;"	i
 skimage	uArch.py	/^import skimage.io as io$/;"	i
 skimage	uArch.py	/^import skimage.transform as trans$/;"	i
+sys	Components/OutputBuffer.py	/^import sys$/;"	i
 test	UNet/model_light.py	/^            test = Model(inputs=model.input, outputs=layer.output)$/;"	v
+test	UNet/model_light.py	/^    test = Model(inputs=layer.input, outputs=layer.output)$/;"	v
 test	intermediateResultCheck.py	/^test = [$/;"	v
 testGene	UNet/test.py	/^testGene = testGenerator("testData")$/;"	v
 testGenerator	UNet/data.py	/^def testGenerator(test_path,num_image = 30,target_size = (256,256),flag_multi_class = False,as_gray = True):$/;"	f
@@ -216,6 +223,7 @@ uArch	uArch.py	/^class uArch():$/;"	c
 unet	UNet/model.py	/^def unet(pretrained_weights = None,input_size = (256,256,1)):$/;"	f
 unet	UNet/model_light.py	/^def unet(pretrained_weights = None,input_size = (256,256,1)):$/;"	f
 up_sample_count	UNet/model_light.py	/^    up_sample_count = 1$/;"	v
+usage	Components/ComputationUnit.py	/^    def usage(self) -> None:$/;"	m	class:ComputationUnit
 vMemWrite	Components/OutputBuffer.py	/^    def vMemWrite(self, v_mem: VMem) -> bool:$/;"	m	class:OutputBuffer
 write	Components/VMem.py	/^    def write(self, data: np.array) -> None:$/;"	m	class:VMem
 writeData	Components/OutputBuffer.py	/^    def writeData(self, data: float, position: tuple, channels: range) -> None:$/;"	m	class:OutputBuffer
