@@ -49,6 +49,11 @@ class uArch():
         print ('weights successfully loaded from {}'.format(weight_path))
         self._loadVMem()
 
+    def setComputationMode(self, word_length: int) -> None:
+        if word_length != -1:
+            self.computationUnit.setWordLength(word_length)
+            self.outputBuffer.setWordLength(word_length)
+
     def run(self, input_path: str) -> np.array:
         '''
       ✓ 1. read input image

@@ -20,6 +20,10 @@ class ComputationUnit():
         self.outputChannels = None
         self.cycles = 0
         self.multiplicationCount = 0
+        self.wordLength = 0
+
+    def setWordLength(self, word_length: int) -> None:
+        self.wordLength = word_length
 
     def computeNextRound(self) -> None:
         '''
@@ -46,6 +50,7 @@ class ComputationUnit():
 
         # compute multiplication (element-wise multiplication)
         self.PEArray[2,:numInput*numOutput] = self.PEArray[0,:numInput*numOutput] * self.PEArray[1,:numInput*numOutput]
+        assert self.wordLength == 0, 'quantize after addition, determine the fraction length dynamically, wrap the quantize function into a class'
 
         # record stats for further operations
         self.numInput = numInput

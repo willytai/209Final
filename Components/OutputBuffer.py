@@ -22,8 +22,8 @@ class OutputBuffer():
         self.dataReady = False
         self.end = False
         self.postProcessInfo = dict()
+        self.wordLength = 0
 
-        self.read_layer1 = True
         self.conv_out_count = 1
         self.pool_out_count = 1
         self.upsample_out_count = 1
@@ -102,6 +102,7 @@ class OutputBuffer():
         '''
         # bias
         self.activeBuffer = self.activeBuffer + self.postProcessInfo['bias']
+        assert self.wordLength == 0, 'quantize after addition, determine the fraction length dynamically, wrap the quantize function into a class'
 
         # activation
         if self.postProcessInfo['activation'] == 'relu':

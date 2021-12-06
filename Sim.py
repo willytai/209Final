@@ -20,6 +20,7 @@ def main(args: argparse.Namespace) -> None:
     arch = uArch(pe_array_size=args.pe, verbose=0)
     arch.loadModel(args.model)
     arch.loadWeight(args.weight)
+    arch.setComputationMode(args.fixed)
     out = arch.run(args.input)
     arch.showUsage()
     saveResult(npyfile=out, save_path=args.output, save_name=args.input)
@@ -31,6 +32,7 @@ def parseArgs() -> argparse.Namespace:
     parser.add_argument('--input', type=str, required=True)
     parser.add_argument('--output', type=str, required=False, default='uArchResult')
     parser.add_argument('--pe', type=int, required=False, default=32)
+    parser.add_argument('--fixed', type=int, required=False, default=-1)
     return parser.parse_args()
 
 if __name__ == '__main__':
