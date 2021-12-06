@@ -91,6 +91,9 @@ class OutputBuffer():
     def setConcate(self) -> None:
         self.postProcessInfo['concat'] = True
 
+    def setDropoutRatio(self, ratio: float) -> None:
+        self.postProcessInfo['drop'] = ratio
+
     def setFinalRound(self) -> None:
         self.end = True
 
@@ -111,6 +114,10 @@ class OutputBuffer():
             self.activeBuffer = 1 / (1 + np.exp(-self.activeBuffer))
         else:
             raise NotImplementedError('unsupported activation type: {}'.format(self.postProcessInfo['activation']))
+
+        # dropout
+        if 'drop' in self.postProcessInfo:
+            self.activeBuffer = self.activeBuffer * (1.0 - self.postProcessInfo['drop'])
 
         # np.save('./intermediate_feature_maps_light_check/layer{}_conv_output.npy'.format(self.conv_out_count), self.activeBuffer)
         # self.conv_out_count += 1

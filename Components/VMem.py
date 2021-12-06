@@ -115,6 +115,8 @@ class VMem():
                 self.outputBuffer.setUpsample(targetLayer.kernel_size)
             elif targetLayer.type == LayerType.CONCAT:
                 self.outputBuffer.setConcate()
+            elif targetLayer.type == LayerType.DROP_OUT:
+                self.outputBuffer.setDropoutRatio(targetLayer.dropRate)
             else:
                 raise NotImplementedError('unsupported layer type: {}'.format(targetLayer.type))
             self.layerID += 1
