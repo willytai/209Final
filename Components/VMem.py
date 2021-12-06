@@ -117,6 +117,8 @@ class VMem():
                 self.outputBuffer.setConcate()
             elif targetLayer.type == LayerType.DROP_OUT:
                 self.outputBuffer.setDropoutRatio(targetLayer.dropRate)
+                if targetLayer.name in self.concatCandidates:
+                    self.outputBuffer.setSaveResidual()
             else:
                 raise NotImplementedError('unsupported layer type: {}'.format(targetLayer.type))
             self.layerID += 1

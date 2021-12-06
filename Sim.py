@@ -17,7 +17,7 @@ naming convention:
 '''
 
 def main(args: argparse.Namespace) -> None:
-    arch = uArch(pe_array_size=args.pe, verbose=0)
+    arch = uArch(pe_array_size=args.pe, verbose=args.verbose)
     arch.loadModel(args.model)
     arch.loadWeight(args.weight)
     arch.setComputationMode(args.fixed)
@@ -33,6 +33,7 @@ def parseArgs() -> argparse.Namespace:
     parser.add_argument('--output', type=str, required=False, default='uArchResult')
     parser.add_argument('--pe', type=int, required=False, default=32)
     parser.add_argument('--fixed', type=int, required=False, default=-1)
+    parser.add_argument('--verbose', type=int, required=False, default=0)
     return parser.parse_args()
 
 if __name__ == '__main__':
