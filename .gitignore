@@ -3,4 +3,8 @@ unetRef
 __pycache__
 *.hdf5
 *.swp
+*.log
+*.svg
+*.pstats
+*.sh
 .DS_Store

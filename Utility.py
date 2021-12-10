@@ -5,8 +5,7 @@ class Quantizer:
     def __init__(self):
         if Quantizer.__instance is not None:
             raise Exception('Do not initiate this class explicitly, get the instance by calling Quantizer.getInstance() instead.')
-        else:
-            Quantizer.__instance = self
+        Quantizer.__instance = self
         self.wordLength = None
         self.lut = dict()
 
@@ -35,6 +34,7 @@ class Quantizer:
 
         print ('quantizing data with word length: {}, fraction length: {}'.format(self.wordLength, finalFL))
 
+        # some tricks (float -> fixed -> float)
         array_q = array * pow(2, finalFL)
         array_q = np.round(array_q)
         array_q = array_q * pow(2, -finalFL)
@@ -50,30 +50,6 @@ class Quantizer:
             Quantizer()
         return Quantizer.__instance
 
-def quantize8(value: np.array, fl: int) -> np.array:
-    wl = 8
-    '''
-    wl: word length
-    fl: fraction length
-
-    For quantizing normalized images, it's basically quantize(image, 8, 7)
-    since pixel value ranges between [0, 1]
-    '''
-    intLen = wl - fl
-    precision = pow(2, -fl)
-    valueRange = (-pow(2, intLen-1) + precision, pow(2, intLen-1) - precision) # cutoff values
-
-    # some tricks (float -> fixed -> float)
-    value_q = value * pow(2, fl)
-    value_q = np.round(value_q)
-    value_q = value_q * pow(2, -fl)
-
-    # saturate the values
-    value_q = np.maximum(value_q, valueRange[0])
-    value_q = np.minimum(value_q, valueRange[1])
-
-    return value_q
-
 def memcpy(dst: np.array, src: np.array, start: int = 0, count: int = -1) -> None:
     '''
     dst: to destination for src to copy to
@@ -87,14 +63,6 @@ def memcpy(dst: np.array, src: np.array, start: int = 0, count: int = -1) -> Non
     dst[start:start+count] = src[:count]
 
 if __name__ == '__main__':
-    def test_quantize8():
-        import skimage.io as io
-        import skimage.transform as trans
-        img = io.imread('./UNet/testData/0.png', as_gray=True)
-        img = img / 255
-        img = trans.resize(image=img, output_shape=(256, 256, 1))
-        print (quantize8(img[128:158, 128:158], 7))
-
     def test_quantizer():
         import skimage.io as io
         import skimage.transform as trans
@@ -112,5 +80,4 @@ if __name__ == '__main__':
         print ('after', dst)
 
     # test_memcpy()
-    # test_quantize8()
     # test_quantizer()

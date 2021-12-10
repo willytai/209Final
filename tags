@@ -43,6 +43,9 @@ PadType	Layer.py	/^class PadType(enum.Enum):$/;"	c
 Pavement	UNet/data.py	/^Pavement = [60,40,222]$/;"	v
 Pedestrian	UNet/data.py	/^Pedestrian = [64,64,0]$/;"	v
 Pole	UNet/data.py	/^Pole = [192,192,128]$/;"	v
+Quantizer	Components/OutputBuffer.py	/^from Utility import Quantizer$/;"	i
+Quantizer	Utility.py	/^class Quantizer:$/;"	c
+Quantizer	uArch.py	/^from Utility import Quantizer$/;"	i
 Road	UNet/data.py	/^Road = [128,64,128]$/;"	v
 SAME	Layer.py	/^    SAME = 1$/;"	v	class:PadType
 SignSymbol	UNet/data.py	/^SignSymbol = [192,128,128]$/;"	v
@@ -68,7 +71,9 @@ __init__	Components/InputBuffer.py	/^    def __init__(self, strides: int, kernel
 __init__	Components/OutputBuffer.py	/^    def __init__(self) -> None:$/;"	m	class:OutputBuffer
 __init__	Components/VMem.py	/^    def __init__(self, verbose: int = 0) -> None:$/;"	m	class:VMem
 __init__	Layer.py	/^    def __init__(self, layer_type: LayerType, name: str) -> None:$/;"	m	class:Layer
+__init__	Utility.py	/^    def __init__(self):$/;"	m	class:Quantizer
 __init__	uArch.py	/^    def __init__(self, pe_array_size: int = 32, verbose: int = 0) -> None:$/;"	m	class:uArch
+__instance	Utility.py	/^    __instance = None$/;"	v	class:Quantizer
 __str__	Components/InputBuffer.py	/^    def __str__(self):$/;"	m	class:KernelPostion	file:
 __str__	Layer.py	/^    def __str__(self) -> str:$/;"	m	class:Layer	file:
 _check	Components/InputBuffer.py	/^    def _check(self) -> None:$/;"	m	class:InputBuffer
@@ -89,10 +94,9 @@ addInputLayer	Components/VMem.py	/^    def addInputLayer(self, name: str, input_
 addMaxPoolingLayer	Components/VMem.py	/^    def addMaxPoolingLayer(self, name: str, kernel_size: Union[int,tuple], strides: Union[int,tuple], pad: Union[str,PadType]) -> None:$/;"	m	class:VMem
 addUpSamplingLayer	Components/VMem.py	/^    def addUpSamplingLayer(self, name: str, kernel_size: Union[int,tuple]) -> None:$/;"	m	class:VMem
 adjustData	UNet/data.py	/^def adjustData(img,mask,flag_multi_class,num_class):$/;"	f
-argparse	Sim.py	/^import argparse$/;"	i
+argparse	Sim.py	/^import argparse, time$/;"	i
 block_reduce	Components/OutputBuffer.py	/^from skimage.measure import block_reduce$/;"	i
 check	UNet/model_light.py	/^    check = test.predict(inn)[0]$/;"	v
-check	intermediateResultCheck.py	/^        check = np.load(b)$/;"	v
 checkData	Components/OutputBuffer.py	/^    def checkData(self) -> None:$/;"	m	class:OutputBuffer
 computeNextRound	Components/ComputationUnit.py	/^    def computeNextRound(self) -> None:$/;"	m	class:ComputationUnit
 computeShape	Layer.py	/^    def computeShape(self, layer_map: dict, input_shape: tuple) -> tuple:$/;"	m	class:Layer
@@ -100,13 +104,12 @@ concat_count	UNet/model_light.py	/^    concat_count = 1$/;"	v
 conv_count	UNet/model_light.py	/^    conv_count = 1$/;"	v
 dataFetch	Components/ComputationUnit.py	/^    def dataFetch(self) -> tuple:$/;"	m	class:ComputationUnit
 dataWrite	Components/ComputationUnit.py	/^    def dataWrite(self, output_buffer: OutputBuffer) -> tuple:$/;"	m	class:ComputationUnit
-diff	intermediateResultCheck.py	/^        diff = np.abs(check-ref)$/;"	v
 enum	Layer.py	/^import enum$/;"	i
 geneTrainNpy	UNet/data.py	/^def geneTrainNpy(image_path,mask_path,flag_multi_class = False,num_class = 2,image_prefix = "image",mask_prefix = "mask",image_as_gray = True,mask_as_gray = True):$/;"	f
 getInputShape	Layer.py	/^    def getInputShape(self) -> tuple:$/;"	m	class:Layer
+getInstance	Utility.py	/^    def getInstance():$/;"	m	class:Quantizer
 getModelInputShape	Components/VMem.py	/^    def getModelInputShape(self) -> tuple:$/;"	m	class:VMem
 glob	UNet/data.py	/^import glob$/;"	i
-golden	intermediateResultCheck.py	/^golden = [$/;"	v
 hasNext	Components/InputBuffer.py	/^    def hasNext(self):$/;"	m	class:KernelPostion
 img	UNet/model.py	/^    img = img \/ 255$/;"	v
 img	UNet/model.py	/^    img = io.imread('.\/testData\/0.png', as_gray=True)$/;"	v
@@ -146,6 +149,7 @@ memcpy	Utility.py	/^def memcpy(dst: np.array, src: np.array, start: int = 0, cou
 model	UNet/model.py	/^    model = unet()$/;"	v
 model	UNet/model_light.py	/^    model = unet()$/;"	v
 model	UNet/test.py	/^model = unet()$/;"	v
+model	UNet/test_light.py	/^model = unet()$/;"	v
 model_from_json	uArch.py	/^from tensorflow.keras.models import model_from_json$/;"	i
 next	Components/InputBuffer.py	/^    def next(self, max_kernel_usage: int) -> tuple:$/;"	m	class:KernelPostion
 np	Components/ComputationUnit.py	/^import numpy as np$/;"	i
@@ -157,7 +161,6 @@ np	UNet/data.py	/^import numpy as np $/;"	i
 np	UNet/model.py	/^    import numpy as np$/;"	i
 np	UNet/model_light.py	/^    import numpy as np$/;"	i
 np	Utility.py	/^import numpy as np$/;"	i
-np	intermediateResultCheck.py	/^import numpy as np$/;"	i
 np	uArch.py	/^import numpy as np$/;"	i
 os	UNet/data.py	/^import os$/;"	i
 parseArgs	Sim.py	/^def parseArgs() -> argparse.Namespace:$/;"	f
@@ -165,14 +168,14 @@ pathlib	UNet/data.py	/^import pathlib$/;"	i
 pool_count	UNet/model_light.py	/^    pool_count = 1$/;"	v
 postProcess	Components/OutputBuffer.py	/^    def postProcess(self) -> None:$/;"	m	class:OutputBuffer
 print_function	UNet/data.py	/^from __future__ import print_function$/;"	i
-quantize8	Utility.py	/^def quantize8(value: np.array, fl: int) -> np.array:$/;"	f
-ref	intermediateResultCheck.py	/^        ref = np.load(a)$/;"	v
+quantize	Utility.py	/^    def quantize(self, array: np.array) -> np.array:$/;"	m	class:Quantizer
 requestData	Components/OutputBuffer.py	/^    def requestData(self) -> None:$/;"	m	class:OutputBuffer
 requestOutput	Components/VMem.py	/^    def requestOutput(self) -> bool:$/;"	m	class:VMem
 resetBuffer	Components/OutputBuffer.py	/^    def resetBuffer(self, shape: tuple) -> None:$/;"	m	class:OutputBuffer
 resetKernelPosition	Components/InputBuffer.py	/^    def resetKernelPosition(self, strides: int, kernel_num: int, kernel_size: tuple, output_shape: tuple) -> None:$/;"	m	class:InputBuffer
 resetStatusLine	Components/InputBuffer.py	/^    def resetStatusLine(self):$/;"	m	class:KernelPostion
 results	UNet/test.py	/^results = model.predict_generator(testGene,30,verbose=1)$/;"	v
+results	UNet/test_light.py	/^results = model.predict_generator(testGene,30,verbose=1)$/;"	v
 ret	UNet/model_light.py	/^            ret = test.predict(img)[0]$/;"	v
 run	uArch.py	/^    def run(self, input_path: str) -> np.array:$/;"	m	class:uArch
 saveResult	Sim.py	/^from UNet.data import saveResult$/;"	i
@@ -180,19 +183,23 @@ saveResult	UNet/data.py	/^def saveResult(npyfile,save_path,save_name=None,flag_m
 send	Components/VMem.py	/^    def send(self, input_buffer: InputBuffer) -> None:$/;"	m	class:VMem
 sendData	Components/InputBuffer.py	/^    def sendData(self, max_multiplications: int) -> tuple:$/;"	m	class:InputBuffer
 setBiasActivation	Components/OutputBuffer.py	/^    def setBiasActivation(self, bias: np.array, activation: str) -> None:$/;"	m	class:OutputBuffer
+setComputationMode	uArch.py	/^    def setComputationMode(self, word_length: int) -> None:$/;"	m	class:uArch
 setConcatParam	Layer.py	/^    def setConcatParam(self, src: str, dst: str) -> None:$/;"	m	class:Layer
 setConcate	Components/OutputBuffer.py	/^    def setConcate(self) -> None:$/;"	m	class:OutputBuffer
 setConvParam	Layer.py	/^    def setConvParam(self, filters: int, activation: str, kernel_size: tuple, strides: int, pad: PadType) -> None:$/;"	m	class:Layer
 setDropoutParam	Layer.py	/^    def setDropoutParam(self, rate: float) -> None:$/;"	m	class:Layer
+setDropoutRatio	Components/OutputBuffer.py	/^    def setDropoutRatio(self, ratio: float) -> None:$/;"	m	class:OutputBuffer
 setFinalRound	Components/OutputBuffer.py	/^    def setFinalRound(self) -> None:$/;"	m	class:OutputBuffer
 setInputParam	Layer.py	/^    def setInputParam(self, input_shape: tuple) -> None:$/;"	m	class:Layer
 setMaxPoolingParam	Layer.py	/^    def setMaxPoolingParam(self, kernel_size: tuple, strides: int, pad: PadType) -> None:$/;"	m	class:Layer
 setPooling	Components/OutputBuffer.py	/^    def setPooling(self, pool_size: tuple) -> None:$/;"	m	class:OutputBuffer
+setQuantize	Components/OutputBuffer.py	/^    def setQuantize(self) -> None:$/;"	m	class:OutputBuffer
 setSaveResidual	Components/OutputBuffer.py	/^    def setSaveResidual(self) -> None:$/;"	m	class:OutputBuffer
 setUpSamplingParam	Layer.py	/^    def setUpSamplingParam(self, kernel_size: tuple) -> None:$/;"	m	class:Layer
 setUpsample	Components/OutputBuffer.py	/^    def setUpsample(self, kernel_size: tuple) -> None:$/;"	m	class:OutputBuffer
 setWeigtsBias	Components/VMem.py	/^    def setWeigtsBias(self, layer_name: str, weights: np.array, bias: np.array) -> None:$/;"	m	class:VMem
 setWeigtsBias	Layer.py	/^    def setWeigtsBias(self, weights: np.array, bias: np.array) -> None:$/;"	m	class:Layer
+setWordLength	Utility.py	/^    def setWordLength(self, word_length: int) -> None:$/;"	m	class:Quantizer
 showUsage	uArch.py	/^    def showUsage(self) -> None:$/;"	m	class:uArch
 skimage	UNet/data.py	/^import skimage.io as io$/;"	i
 skimage	UNet/data.py	/^import skimage.transform as trans$/;"	i
@@ -207,11 +214,12 @@ skimage	uArch.py	/^import skimage.transform as trans$/;"	i
 sys	Components/OutputBuffer.py	/^import sys$/;"	i
 test	UNet/model_light.py	/^            test = Model(inputs=model.input, outputs=layer.output)$/;"	v
 test	UNet/model_light.py	/^    test = Model(inputs=layer.input, outputs=layer.output)$/;"	v
-test	intermediateResultCheck.py	/^test = [$/;"	v
 testGene	UNet/test.py	/^testGene = testGenerator("testData")$/;"	v
+testGene	UNet/test_light.py	/^testGene = testGenerator("testData")$/;"	v
 testGenerator	UNet/data.py	/^def testGenerator(test_path,num_image = 30,target_size = (256,256),flag_multi_class = False,as_gray = True):$/;"	f
 test_memcpy	Utility.py	/^    def test_memcpy():$/;"	f	function:memcpy
-test_quantize8	Utility.py	/^    def test_quantize8():$/;"	f	function:memcpy
+test_quantizer	Utility.py	/^    def test_quantizer():$/;"	f	function:memcpy
+time	Sim.py	/^import argparse, time$/;"	i
 trainGenerator	UNet/data.py	/^def trainGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,image_color_mode = "grayscale",$/;"	f
 trans	UNet/data.py	/^import skimage.transform as trans$/;"	i
 trans	UNet/model.py	/^    import skimage.transform as trans$/;"	i
