@@ -21,7 +21,7 @@ pip3 install -r requirements.txt
 
 ## Inference
 
-### Model
+#### Model
 
 Weights for model `UNet/unet_model.json` can be found here  
 - floating-point weight: [unet\_model.hdf5](https://drive.google.com/file/d/1ED_2y6CAPgSV4XP-Ytnb-5D8bijMZITr/view?usp=sharing)
@@ -31,7 +31,7 @@ Weights for model `Unet/unet_model_light.json` are uploaded to `UNet/`
 - 8-bit fixed-point weights: `UNet/unet_model_light_fixed8.hdf5`
 - 16-bit fixed-point weights: `UNet/unet_model_light_fixed16.hdf5`
 
-### Run Script
+#### Run Script
 
 testing data are in `UNet/testData/`  
 to run inference loop for the light-weight model with default parameters floating-point operation:
