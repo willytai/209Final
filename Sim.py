@@ -1,6 +1,6 @@
 from uArch import uArch
 from UNet.data import saveResult
-import argparse
+import argparse, time
 
 '''
 original_unet:
@@ -14,6 +14,7 @@ naming convention:
 '''
 
 def main(args: argparse.Namespace) -> None:
+    starttime = time.time()
     arch = uArch(pe_array_size=args.pe, verbose=args.verbose)
     arch.loadModel(args.model)
     arch.loadWeight(args.weight)
@@ -21,6 +22,8 @@ def main(args: argparse.Namespace) -> None:
     out = arch.run(args.input)
     arch.showUsage()
     saveResult(npyfile=out, save_path=args.output, save_name=args.input)
+    elapsed = int(time.time() - starttime)
+    print ('time elapsed: {}m {}s'.format(elapsed // 60, elapsed % 60))
 
 def parseArgs() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
