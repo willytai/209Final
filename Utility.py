@@ -1,5 +1,55 @@
 import numpy as np
 
+class Quantizer:
+    __instance = None
+    def __init__(self):
+        if Quantizer.__instance is not None:
+            raise Exception('Do not initiate this class explicitly, get the instance by calling Quantizer.getInstance() instead.')
+        else:
+            Quantizer.__instance = self
+        self.wordLength = None
+        self.lut = dict()
+
+    def setWordLength(self, word_length: int) -> None:
+        self.wordLength = word_length
+
+        # fraction length ranges from 0 to word_length
+        for fl in range(word_length):
+            intLen = self.wordLength - fl
+            precision = pow(2, -fl)
+            valueRange = (-pow(2, intLen-1) + precision, pow(2, intLen-1) - precision)
+            self.lut[fl] = valueRange
+
+    def quantize(self, array: np.array) -> np.array:
+        if self.wordLength is None:
+            raise ValueError('word length not set')
+
+        maxVal = array.max()
+        minVal = array.min()
+        finalFL = 0
+        for fl in range(8):
+            refMin, refMax = self.lut[fl]
+            if refMin <= minVal and maxVal <= refMax:
+                finalFL = int(fl)
+            else: break
+
+        print ('quantizing data with word length: {}, fraction length: {}'.format(self.wordLength, finalFL))
+
+        array_q = array * pow(2, finalFL)
+        array_q = np.round(array_q)
+        array_q = array_q * pow(2, -finalFL)
+
+        # saturate the arrays
+        array_q = np.maximum(array_q, self.lut[finalFL][0])
+        array_q = np.minimum(array_q, self.lut[finalFL][1])
+        return array_q
+
+    @staticmethod
+    def getInstance():
+        if Quantizer.__instance is None:
+            Quantizer()
+        return Quantizer.__instance
+
 def quantize8(value: np.array, fl: int) -> np.array:
     wl = 8
     '''
@@ -43,7 +93,16 @@ if __name__ == '__main__':
         img = io.imread('./UNet/testData/0.png', as_gray=True)
         img = img / 255
         img = trans.resize(image=img, output_shape=(256, 256, 1))
-        print (quantize(img[128:158, 128:158], 8, 7))
+        print (quantize8(img[128:158, 128:158], 7))
+
+    def test_quantizer():
+        import skimage.io as io
+        import skimage.transform as trans
+        img = io.imread('./UNet/testData/0.png', as_gray=True)
+        img = img / 255
+        img = trans.resize(image=img, output_shape=(256, 256, 1))
+        Quantizer.getInstance().setWordLength(8)
+        print (Quantizer.getInstance().quantize(img[128:158, 128:158]))
 
     def test_memcpy():
         dst = np.zeros(shape=(20,))
@@ -54,3 +113,4 @@ if __name__ == '__main__':
 
     # test_memcpy()
     # test_quantize8()
+    # test_quantizer()

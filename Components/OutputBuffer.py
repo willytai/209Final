@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 from skimage.measure import block_reduce
+from Utility import Quantizer
 from . import VMem as VMem
 from . import ComputationUnit as ComputationUnit
 
@@ -22,7 +23,7 @@ class OutputBuffer():
         self.dataReady = False
         self.end = False
         self.postProcessInfo = dict()
-        self.wordLength = 0
+        self.quantize = False
 
         self.conv_out_count = 1
         self.pool_out_count = 1
@@ -75,6 +76,9 @@ class OutputBuffer():
     def resetBuffer(self, shape: tuple) -> None:
         self.activeBuffer = np.zeros(shape)
 
+    def setQuantize(self) -> None:
+        self.quantize = True
+
     def setBiasActivation(self, bias: np.array, activation: str) -> None:
         self.postProcessInfo['bias'] = bias
         self.postProcessInfo['activation'] = activation
@@ -105,13 +109,16 @@ class OutputBuffer():
         '''
         # bias
         self.activeBuffer = self.activeBuffer + self.postProcessInfo['bias']
-        assert self.wordLength == 0, 'quantize after addition, determine the fraction length dynamically, wrap the quantize function into a class'
+        if self.quantize:
+            self.activeBuffer = Quantizer.getInstance().quantize(self.activeBuffer)
 
         # activation
         if self.postProcessInfo['activation'] == 'relu':
             self.activeBuffer = np.maximum(0, self.activeBuffer)
         elif self.postProcessInfo['activation'] == 'sigmoid':
             self.activeBuffer = 1 / (1 + np.exp(-self.activeBuffer))
+            if self.quantize:
+                self.activeBuffer = Quantizer.getInstance().quantize(self.activeBuffer)
         else:
             raise NotImplementedError('unsupported activation type: {}'.format(self.postProcessInfo['activation']))
 

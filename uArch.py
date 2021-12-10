@@ -2,6 +2,7 @@ from Components.VMem import VMem
 from Components.ComputationUnit import ComputationUnit
 from Components.OutputBuffer import OutputBuffer
 from Components.InputBuffer import InputBuffer
+from Utility import Quantizer
 from tensorflow.keras.models import model_from_json
 import numpy as np
 import skimage.io as io
@@ -51,8 +52,8 @@ class uArch():
 
     def setComputationMode(self, word_length: int) -> None:
         if word_length != -1:
-            self.computationUnit.setWordLength(word_length)
-            self.outputBuffer.setWordLength(word_length)
+            self.outputBuffer.setQuantize()
+            Quantizer.getInstance().setWordLength(word_length)
 
     def run(self, input_path: str) -> np.array:
         '''

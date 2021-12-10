@@ -38,7 +38,7 @@ class VMem():
         '''
         inputDim = self.layerList[0].getInputShape() # from the first layer (input layer)
         filters = self.layerList[1].filters          # from the first conv layer (right after the input layer)
-        image_q = quantize8(image, fl=7)
+        image_q = Quantizer.getInstance().quantize(image)
         self.featureMapStorage = np.zeros(shape=(inputDim[0]*inputDim[1]*filters*2), dtype=np.float32)
         self.write(image_q)
 

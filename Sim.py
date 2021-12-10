@@ -6,9 +6,6 @@ import argparse
 original_unet:
 Download model weights from: 'https://drive.google.com/file/d/1ED_2y6CAPgSV4XP-Ytnb-5D8bijMZITr/view?usp=sharing'
 
-unet_light:
-Download model weights from: 'https://drive.google.com/file/d/17v1x95NOmZbmfGegrj8sS3KHwpQDmbYP/view?usp=sharing'
-
 naming convention:
     - class names are capitalized
     - function params are <word1>_<word2>
